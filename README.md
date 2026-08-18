@@ -23,7 +23,7 @@ nixos-rebuild switch --flake .#lenovo --target-host root@192.168.1.188
 Following this guide for nixos-anywhere https://nix-community.github.io/nixos-anywhere/quickstart.html
 
 ```sh
-nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-facter ./facter.json  --flake .#lenovo --target-host root@192.168.1.188
+nix run github:nix-community/nixos-anywhere -- --extra-files nixos-anywhere-extra-files --generate-hardware-config nixos-facter ./facter.json  --flake .#lenovo --target-host root@192.168.1.188
 ```
 
 ## Development

@@ -19,10 +19,13 @@ in
     ./anon.nix
     ./netbird.nix
     ./firefox.nix
-    #./speakers.nix
+    ./speakers.nix
   ];
 
   services.flatpak.enable = true;
+
+  # GNOME and such
+  services.udev.packages = with pkgs; [ gnome-settings-daemon ];
   services.displayManager.gdm.enable = true;
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "anon";
@@ -32,8 +35,20 @@ in
   services.xserver.xkb.variant = "";
   # Configure console keymap
   console.keyMap = "dk-latin1";
+
   # danish UI
   i18n.defaultLocale = "da_DK.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "da_DK.UTF-8";
+    LC_IDENTIFICATION = "da_DK.UTF-8";
+    LC_MEASUREMENT = "da_DK.UTF-8";
+    LC_MONETARY = "da_DK.UTF-8";
+    LC_NAME = "da_DK.UTF-8";
+    LC_NUMERIC = "da_DK.UTF-8";
+    LC_PAPER = "da_DK.UTF-8";
+    LC_TELEPHONE = "da_DK.UTF-8";
+    LC_TIME = "da_DK.UTF-8";
+  };
 
   boot.loader.grub = {
     # no need to set devices, disko will add all devices that have a EF02 partition to the list already
@@ -41,20 +56,25 @@ in
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
+  boot.loader.systemd-boot.configurationLimit = 10;
   
-  services.openssh.enable = true;
-    services.openssh = {
-      enable = true;
-      openFirewall = true;
-      settings = {
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-        PermitRootLogin = "yes";
-        #AllowUsers = [ "myUser" ];
-        #MaxAuthTries = 3;
-        #PerSourcePenalties = "crash:3600s authfail:3600s max:86400s";
-      };
+  nix.settings.trusted-users = [ "root" "jef" ];
+  nix.settings.max-jobs = 4; # 8 cpus
+  nix.settings.use-cgroups = true; # supposedly enables resource limits for builders https://discourse.nixos.org/t/nix-build-ate-my-ram/35752
+  nix.settings.experimental-features = [ "nix-command" "flakes" "cgroups" ];
+  
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      PasswordAuthentication = false;
+      KbdInteractiveAuthentication = false;
+      PermitRootLogin = "yes";
+      AllowUsers = [ "admin" ];
+      #MaxAuthTries = 3;
+      #PerSourcePenalties = "crash:3600s authfail:3600s max:86400s";
     };
+  };
 
   environment.systemPackages = with pkgs; [
     curl
@@ -68,5 +88,5 @@ in
 
   security.sudo.wheelNeedsPassword = false;
 
-  system.stateVersion = "26.05";
+  system.stateVersion = "26.11";
 }
