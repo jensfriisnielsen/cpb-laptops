@@ -11,6 +11,7 @@
       brave
       chromium
       gimp
+      inkscape
       krita
       libreoffice
       librewolf

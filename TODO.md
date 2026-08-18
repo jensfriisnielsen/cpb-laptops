@@ -1,26 +1,15 @@
 # TODOs
 
-## Admin user
-
-including hashed and encrypted password
-
-## Netbird wireguard provisioning
-
 ## email
 
-## slides
+## docs
 
-## disable speakers
-
-Done. Built-in ALC257 `Speaker` is muted by [`speakers.nix`](speakers.nix); headphones and other outputs are left alone.
-
-## browser profiles
-
-- open on boot
-- startpage
-- searchpage
-- browser extensions
-
-## flatpak enabled
+real static HTML docs, not just slides and readme
 
 ## home-manager
+
+## hostname
+
+specify hostname on initial deployment which propagates to netbird
+
+ideal if there is a way to specify a configuration value when deploying with nixos-anywhere

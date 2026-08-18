@@ -58,7 +58,7 @@ in
   };
   boot.loader.systemd-boot.configurationLimit = 10;
   
-  nix.settings.trusted-users = [ "root" "jef" ];
+  nix.settings.trusted-users = [ "root" "admin" ];
   nix.settings.max-jobs = 4; # 8 cpus
   nix.settings.use-cgroups = true; # supposedly enables resource limits for builders https://discourse.nixos.org/t/nix-build-ate-my-ram/35752
   nix.settings.experimental-features = [ "nix-command" "flakes" "cgroups" ];
@@ -70,7 +70,7 @@ in
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "yes";
-      AllowUsers = [ "admin" ];
+      AllowUsers = [ "root" "admin" ];
       #MaxAuthTries = 3;
       #PerSourcePenalties = "crash:3600s authfail:3600s max:86400s";
     };

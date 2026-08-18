@@ -57,3 +57,16 @@ id_ed25519 SSH keys was used to generate the laptop age keys required on the lap
 ```sh
 nix-shell -p mkpasswd --run 'echo -n "yourpassword" | mkpasswd -s' | tr -d '\n'
 ```
+
+## Speakers
+
+Internal speakers stay off so classroom machines stay quiet. 3.5mm headphones, USB/Bluetooth headsets, and HDMI audio still work.
+
+[`speakers.nix`](speakers.nix) tells WirePlumber to disable the ALSA UCM sink whose name matches `HiFi__Speaker__sink`.
+On these ThinkPad T14s Gen 2a machines, speakers and headphones are two UCM devices on the same analog card (`Realtek ALC257`).
+Disabling only that Speaker sink leaves the Headphones sink alone.
+
+Do not mute the ALSA `Speaker` mixer from a boot script or timer. PipeWire then treats the whole HiFi profile as unavailable and GNOME shows **Dummy Output**, which also kills headphones.
+
+With headphones plugged in, `wpctl status` (as the logged-in user) should list a Headphones sink, not Dummy Output.
+
