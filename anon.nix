@@ -10,7 +10,6 @@
       bat # like cat
       brave
       chromium
-      firefox
       gimp
       krita
       libreoffice

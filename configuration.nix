@@ -18,6 +18,7 @@ in
     ./admin.nix
     ./anon.nix
     ./netbird.nix
+    ./firefox.nix
     #./speakers.nix
   ];
 
