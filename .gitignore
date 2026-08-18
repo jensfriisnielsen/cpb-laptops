@@ -1,0 +1,3 @@
+# secrets
+git-crypt-key
+# the rest of the secrets should be encrypted, see .gitattributes and sops.nix

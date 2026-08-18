@@ -4,12 +4,21 @@
   pkgs,
   ...
 } @ args:
+let
+  sshAuthorizedKeys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOJy1bCfyM+qtQ3RdR9DjeYffMuwcburCVJ/LKeNI0z jef2022passphrase"
+  ];
+in
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
-    ./disk-config.nix
+    ./disk-config.nix # disk partitioning
+    ./sops.nix # secrets
+    ./admin.nix
     ./anon.nix
+    ./netbird.nix
+    #./speakers.nix
   ];
 
   services.flatpak.enable = true;
@@ -38,10 +47,10 @@
     tmux
   ];
 
-  users.users.root.openssh.authorizedKeys.keys =
-  [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOJy1bCfyM+qtQ3RdR9DjeYffMuwcburCVJ/LKeNI0z jef2022passphrase"
-  ];
+  users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;
+  users.mutableUsers = false;
 
-  system.stateVersion = "25.11";
+  security.sudo.wheelNeedsPassword = false;
+
+  system.stateVersion = "26.05";
 }

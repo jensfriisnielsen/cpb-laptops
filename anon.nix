@@ -21,5 +21,8 @@
       unp # unpack any archive
       magic-wormhole # wormhole send anywhere
     ];
+    password = "";
+    #hashedPasswordFile = config.sops.secrets."anon-hashed-password".path;
   };
+  sops.secrets."anon-hashed-password".neededForUsers = true;
 }

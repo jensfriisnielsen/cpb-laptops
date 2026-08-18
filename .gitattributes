@@ -1,0 +1,2 @@
+secrets/** filter=git-crypt diff=git-crypt
+nixos-anywhere-extra-files/var/lib/sops-nix/age-private-key.txt filter=git-crypt diff=git-crypt

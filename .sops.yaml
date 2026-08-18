@@ -1,0 +1,9 @@
+keys:
+  - &admin_jens age12h5qxxjux0q8vtqw6wphquue4tlmz5h88r9nfc96f9hp8jy07e0q0nf3ya
+  - &laptops age1qk84ta93scpypq3r7lkna3wwz7d4p0x2lm3g0z8ja5cagcg85elqe2ldfx
+creation_rules:
+  - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+    - age:
+      - *admin_jens
+      - *laptops
