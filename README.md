@@ -13,8 +13,10 @@ firefox slides/index.html
 
 ## Reconfiguring NixOS
 
+The laptop should be connected to Netbird automatically
+
 ```sh
-nixos-rebuild switch --flake .#lenovo --target-host root@192.168.1.188
+nixos-rebuild switch --flake .#koderup1 --target-host root@koderup1.netbird.cloud
 ```
 
 
@@ -23,7 +25,7 @@ nixos-rebuild switch --flake .#lenovo --target-host root@192.168.1.188
 Following this guide for nixos-anywhere https://nix-community.github.io/nixos-anywhere/quickstart.html
 
 ```sh
-nix run github:nix-community/nixos-anywhere -- --extra-files nixos-anywhere-extra-files --generate-hardware-config nixos-facter ./facter.json  --flake .#lenovo --target-host root@192.168.1.188
+nix run github:nix-community/nixos-anywhere -- --extra-files nixos-anywhere-extra-files --flake .#koderup1 --target-host root@192.168.1.188
 ```
 
 ## Development

@@ -10,6 +10,7 @@
       bat # like cat
       brave
       chromium
+      doggo
       gimp
       inkscape
       krita

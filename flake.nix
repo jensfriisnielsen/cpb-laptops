@@ -14,30 +14,35 @@
       sops-nix,
       ...
     }:
-    let 
+    let
+      inherit (nixpkgs) lib;
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
+      hostnames = map (i: "koderup${toString i}") (lib.range 1 40);
+
+      # Shared managed-laptop config; only networking.hostName differs per host.
+      mkLaptop =
+        hostname:
+        lib.nixosSystem {
+          modules = [
+            disko.nixosModules.disko
+            sops-nix.nixosModules.sops
+            ./configuration.nix
+            nixos-facter-modules.nixosModules.facter
+            {
+              networking.hostName = hostname;
+              facter.reportPath =
+                if builtins.pathExists ./facter.json then
+                  ./facter.json
+                else
+                  throw "Have you forgotten to run nixos-anywhere with `--generate-hardware-config nixos-facter ./facter.json`?";
+            }
+          ];
+        };
     in
     {
-      # Slightly experimental: Like generic, but with nixos-facter (https://github.com/numtide/nixos-facter)
-      # nixos-anywhere --flake .#generic-nixos-facter --generate-hardware-config nixos-facter facter.json <hostname>
-      nixosConfigurations.lenovo = nixpkgs.lib.nixosSystem {
-        #system = ${system};
-        modules = [
-          disko.nixosModules.disko
-          sops-nix.nixosModules.sops
-          ./configuration.nix
-          nixos-facter-modules.nixosModules.facter
-          {
-            config.facter.reportPath =
-              if builtins.pathExists ./facter.json then
-                ./facter.json
-              else
-                throw "Have you forgotten to run nixos-anywhere with `--generate-hardware-config nixos-facter ./facter.json`?";
-          }
-        ];
-      };
-      
+      nixosConfigurations = lib.genAttrs hostnames mkLaptop;
+
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
           git-crypt

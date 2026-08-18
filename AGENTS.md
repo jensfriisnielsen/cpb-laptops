@@ -3,5 +3,5 @@
 - Use flake.nix to run project code
 - Keep flake.nix and imported files up-to-date with project dependencies
 - Devshell is for the administrators laptop and for pushing code
-- The nixosConfigurations.lenovo = nixpkgs.lib.nixosSystem configurations are for managed laptops
+- The nixosConfigurations.koderup1 through koderup40 outputs are for managed laptops (same config, unique hostname)
 - Dont mix code for managed and administrator laptops
