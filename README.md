@@ -1,5 +1,16 @@
 # cpj-laptops
 
+Slides
+======
+
+A reveal.js deck on NixOS for teaching laptops lives in [`slides/`](slides/).
+Open [`slides/index.html`](slides/index.html) in a browser.
+See [`slides/README.md`](slides/README.md) for navigation keys and how to copy the folder onto a web server.
+
+```sh
+firefox slides/index.html
+```
+
 Reconfiguring NixOS
 ===================
 

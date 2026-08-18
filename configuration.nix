@@ -31,9 +31,9 @@
   };
   services.openssh.enable = true;
 
-  environment.systemPackages = with pkgs; map lib.lowPrio [
+  environment.systemPackages = with pkgs; [
     curl
-    gitMinimal
+    git
     vim
     tmux
   ];

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>One flake. A setup of identical laptops.</title>
+        <!--
+      Reveal.js is loaded from a pinned jsDelivr CDN.
+      To present offline or self-host later, copy reveal.js dist/ into vendor/
+      and point the stylesheet/script tags here at those files.
+    -->
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/highlight/monokai.css"
+        />
+        <link rel="stylesheet" href="css/theme.css" />
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section id="title" data-menu-title="Title">
+                    <h1>NixOS benefits</h1>
+                    <p class="subtitle">
+                        the
+                        <code>cpb-laptops</code> fleet
+                    </p>
+                    <p class="hint">
+                        &rarr; / space next section &nbsp;&middot;&nbsp; &darr;
+                        more on this topic &nbsp;&middot;&nbsp; Esc overview
+                        &nbsp;&middot;&nbsp; F fullscreen &nbsp;&middot;&nbsp;
+                        click the table of contents to jump
+                    </p>
+                </section>
+
+                <section id="toc" data-menu-title="Table of contents">
+                    <span class="kicker">Table of contents</span>
+                    <h2>The spectacular bits</h2>
+                    <div class="toc-grid">
+                        <div class="toc-col">
+                            <h3>Administration</h3>
+                            <ol>
+                                <li>
+                                    <a href="#/configure-everything"
+                                        >Configuration as code</a
+                                    >
+                                </li>
+                                <li>
+                                    <a href="#/rebuild"
+                                        >Remote rebuild; Autoupdate</a
+                                    >
+                                </li>
+                                <li>
+                                    <a href="#/rollback"
+                                        >Rollback</a
+                                    >
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="toc-col">
+                            <h3>Users</h3>
+                            <ol>
+                                <li><a href="#/same-environment">Works on my machine</a></li>
+                                <li>
+                                    <a href="#/temp-shells">Install it; Break it</a>
+                                </li>
+                                <li>
+                                    <a href="#/auto-login" >Autologin</a
+                                    >
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <section
+                        id="configure-everything"
+                        data-menu-title="Configure everything"
+                    >
+                        <span class="kicker">Administration</span>
+                        <h2>Configuration as code</h2>
+                    </section>
+                    <section>
+                        <span class="kicker">Administration</span>
+                        <pre><code class="language-nix" data-trim>
+                  environment.systemPackages = with pkgs; [
+                    curl
+                    git
+                    vim
+                    tmux
+                    # add more here
+                  ];
+              </code></pre>
+                    </section>
+                    <section>
+                        <span class="kicker">Administration</span>
+                        <h2>Transparent and collaborative</h2>
+                        <a
+                            href="https://github.com/jensfriisnielsen/cpb-laptops"
+                            >GitHub</a
+                        >
+                    </section>
+                    <section>
+                        <h2>Agent friendly</h2>
+                        <pre><code class="language-text">
+$ Please disable speakers on laptops.
+            </code></pre>
+                        <p></p>
+                    </section>
+                    <section>
+                        <span class="kicker">Administration</span>
+                        <h2>Configure everything</h2>
+                        <ol>
+                            <li>
+                                <a
+                                    href="https://github.com/jensfriisnielsen/cpb-laptops/blob/main/disk-config.nix"
+                                    >disks</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    href="https://github.com/jensfriisnielsen/cpb-laptops/blob/d5a360e871e749fe2eb527ae04af3950d6f278ce/configuration.nix#L34"
+                                    >packages</a
+                                >
+                            </li>
+                            <li>
+                                <a href="https://wiki.nixos.org/wiki/Firefox/en"
+                                    >browser profiles</a
+                                >
+                            </li>
+                            <li>DNS</li>
+                            <li>everything..</li>
+                        </ol>
+                    </section>
+
+                    <section id="identical-setups" data-menu-title="Identical setups" >
+                        <span class="kicker">Administration</span>
+                        <h2>Git version control</h2>
+                    </section>
+                </section>
+
+                <section>
+                    <section id="rebuild" data-menu-title="Wipe and rebuild">
+                        <span class="kicker">Administration</span>
+                        <h2>nixos-rebuild over SSH</h2>
+                        <pre><code class="language-bash" data-trim>
+nixos-rebuild switch \
+  --flake ./flake.nix#lenovo \
+  --target-host root@192.168.1.188
+            </code></pre>
+                    </section>
+
+                    <section id="rollback" data-menu-title="Rollback">
+                        <span class="kicker">Administration</span>
+                        <h2>Rollback</h2>
+                        <p class="lede">
+                            A broken generation is not a broken laptop.
+                        </p>
+                    </section>
+                    <section>
+                        <span class="kicker">Administration</span>
+                        <h2>NixOS keeps generations</h2>
+                        <p>
+                            Pick the last good boot from the bootloader, or roll
+                            back in place:
+                        </p>
+                        <pre><code class="language-bash" data-trim>
+                            nixos-rebuild switch --rollback --target-host root@192.168.1.188
+                        </code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section id="same-environment" data-menu-title="Same environment" >
+                        <span class="kicker">Users</span>
+                        <h2>Identical laptops</h2>
+                        <p class="lede">
+                            “Works on my machine”
+                        </p>
+                    </section>
+                    <section id="unbreakable" data-menu-title="Cannot break it">
+                        <span class="kicker">Users</span>
+                        <h2>You cannot permanently break it</h2>
+                        <p class="lede">
+                            Experiment.
+                            The next rebuild restores the declaration.
+                        </p>
+                    </section>
+                </section>
+
+                <section>
+                    <section id="temp-shells" data-menu-title="Temporary installs" >
+                        <span class="kicker">Users</span>
+                        <h2>Temporary installs and shells</h2>
+                        <pre><code class="language-bash" data-trim>
+                            nix-shell -p inkscape
+                            exit # garbage-collection removes inkscape
+                        </code></pre>
+                    </section>
+                    <section>
+                        <span class="kicker">Users</span>
+                        <h2>Flatpak enabled</h2>
+                        <img src="flatpak.png" />
+                    </section>
+                </section>
+
+                <section>
+                    <section id="auto-login" data-menu-title="Sit down and code" >
+                        <span class="kicker">Users</span>
+                        <h2>Auto-login</h2>
+                        <p class="lede">
+                            GNOME opens as
+                            <code>anon</code>.
+                        </p>
+                    </section>
+                    <section id="firefox-profile" data-menu-title="Firefox profile" >
+                        <span class="kicker">Users</span>
+                        <h2>Firefox</h2>
+                        <p class="lede">
+                            with profiles
+                        </p>
+                    </section>
+                </section>
+
+                <section id="close" data-menu-title="Close">
+                    <h1>Declare the setup. Rebuild the laptops.</h1>
+                    <a class="back" href="#/toc">Back to table of contents</a>
+                </section>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/highlight/highlight.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/plugin/notes/notes.js"></script>
+        <script>
+            Reveal.initialize({
+                hash: true,
+                history: false,
+                slideNumber: true,
+                controls: true,
+                progress: true,
+                transition: "fade",
+                plugins: [RevealHighlight, RevealNotes],
+            });
+        </script>
+    </body>
+</html>

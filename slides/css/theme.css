@@ -1,0 +1,242 @@
+:root {
+  --nix-blue: #5277c3;
+  --nix-light: #7ebae4;
+  --nix-dark: #0b1220;
+  --nix-panel: #121a2b;
+  --nix-ink: #e8eef8;
+  --nix-muted: #8a9bb8;
+  --nix-line: #2a3a58;
+}
+
+.reveal-viewport,
+.reveal {
+  background: var(--nix-dark);
+  color: var(--nix-ink);
+  font-family: "Segoe UI", "Noto Sans", "Liberation Sans", system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 400;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  color: var(--nix-light);
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-shadow: none;
+}
+
+.reveal h1 {
+  font-size: 2.1em;
+}
+
+.reveal h2 {
+  font-size: 1.45em;
+}
+
+.reveal h3 {
+  font-size: 0.95em;
+  color: var(--nix-ink);
+  font-weight: 600;
+}
+
+.reveal p,
+.reveal li {
+  color: var(--nix-ink);
+}
+
+.reveal a {
+  color: var(--nix-light);
+  text-decoration: none;
+}
+
+.reveal a:hover {
+  color: #b7d9f3;
+  text-decoration: underline;
+}
+
+.reveal strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.reveal .controls {
+  color: var(--nix-light);
+}
+
+.reveal .progress {
+  color: var(--nix-blue);
+}
+
+.reveal .slide-number {
+  color: var(--nix-muted);
+  background: transparent;
+  font-size: 0.4em;
+}
+
+.kicker {
+  display: block;
+  color: var(--nix-blue);
+  font-size: 0.42em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.8em;
+}
+
+.subtitle {
+  color: var(--nix-muted);
+  font-size: 0.7em;
+  margin-top: 0.8em;
+}
+
+.hint {
+  color: var(--nix-muted);
+  font-size: 0.38em;
+  font-weight: 400;
+  margin-top: 2.4em;
+  letter-spacing: 0.01em;
+}
+
+.lede {
+  font-size: 1.15em;
+  line-height: 1.25;
+}
+
+.why {
+  font-size: 0.85em;
+  color: var(--nix-muted);
+  max-width: 18em;
+  margin: 0.6em auto 0;
+}
+
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4em 2.2em;
+  text-align: left;
+  margin-top: 0.6em;
+}
+
+.toc-col h3 {
+  color: var(--nix-light);
+  font-size: 0.55em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 0.6em;
+  border-bottom: 1px solid var(--nix-line);
+  padding-bottom: 0.35em;
+}
+
+.toc-col ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: toc;
+}
+
+.toc-col li {
+  counter-increment: toc;
+  margin: 0.35em 0;
+  font-size: 0.48em;
+  line-height: 1.3;
+}
+
+.toc-col a {
+  color: var(--nix-ink);
+  display: grid;
+  grid-template-columns: 1.6em 1fr;
+  gap: 0.35em;
+  align-items: baseline;
+}
+
+.toc-col a::before {
+  content: counter(toc, decimal-leading-zero);
+  color: var(--nix-blue);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.toc-col a:hover {
+  color: var(--nix-light);
+  text-decoration: none;
+}
+
+.repo-map {
+  display: grid;
+  gap: 0.45em;
+  text-align: left;
+  max-width: 16em;
+  margin: 1em auto 0;
+  font-size: 0.5em;
+}
+
+.repo-map li {
+  list-style: none;
+  background: var(--nix-panel);
+  border: 1px solid var(--nix-line);
+  border-left: 4px solid var(--nix-blue);
+  border-radius: 6px;
+  padding: 0.45em 0.7em;
+}
+
+.repo-map code {
+  color: var(--nix-light);
+}
+
+.pkg-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35em;
+  margin-top: 0.9em;
+}
+
+.pkg-grid span {
+  background: var(--nix-panel);
+  border: 1px solid var(--nix-line);
+  border-radius: 999px;
+  color: var(--nix-light);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.42em;
+  padding: 0.28em 0.7em;
+}
+
+.reveal pre {
+  width: 100%;
+  margin: 1em auto;
+  box-shadow: none;
+  font-size: 0.42em;
+  line-height: 1.45;
+}
+
+.reveal pre code {
+  background: var(--nix-panel);
+  border: 1px solid var(--nix-line);
+  border-radius: 8px;
+  padding: 1em 1.1em;
+  color: var(--nix-ink);
+  max-height: none;
+  text-align: left !important;
+}
+
+.reveal .hljs {
+  background: var(--nix-panel);
+}
+
+.back {
+  display: inline-block;
+  margin-top: 1.4em;
+  font-size: 0.42em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .toc-grid {
+    grid-template-columns: 1fr;
+  }
+}
