@@ -31,6 +31,8 @@ in
   services.xserver.xkb.variant = "";
   # Configure console keymap
   console.keyMap = "dk-latin1";
+  # danish UI
+  i18n.defaultLocale = "da_DK.UTF-8";
 
   boot.loader.grub = {
     # no need to set devices, disko will add all devices that have a EF02 partition to the list already
@@ -38,7 +40,20 @@ in
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
+  
   services.openssh.enable = true;
+    services.openssh = {
+      enable = true;
+      openFirewall = true;
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = "yes";
+        #AllowUsers = [ "myUser" ];
+        #MaxAuthTries = 3;
+        #PerSourcePenalties = "crash:3600s authfail:3600s max:86400s";
+      };
+    };
 
   environment.systemPackages = with pkgs; [
     curl

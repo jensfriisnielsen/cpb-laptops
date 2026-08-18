@@ -52,3 +52,8 @@ netbird-setup-key is required to connect to netbird in order to be able to provi
 Note:
 id_ed25519 SSH keys was used to generate the laptop age keys required on the laptop for sops activation decryption.
 
+## HashedPasswords
+
+```sh
+nix-shell -p mkpasswd --run 'echo -n "yourpassword" | mkpasswd -s' | tr -d '\n'
+```
