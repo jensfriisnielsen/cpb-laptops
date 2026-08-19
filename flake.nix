@@ -20,6 +20,19 @@
       pkgs = import nixpkgs { inherit system; };
       hostnames = map (i: "koderup${toString i}") (lib.range 1 40);
 
+      # Administrator laptop only: share WiFi over Ethernet to installer machines.
+      share-eth = pkgs.writeShellApplication {
+        name = "share-eth";
+        runtimeInputs = with pkgs; [
+          coreutils
+          gawk
+          gnugrep
+          iproute2
+          iptables
+        ];
+        text = builtins.readFile ./scripts/share-eth.sh;
+      };
+
       # Shared managed-laptop config; only networking.hostName differs per host.
       mkLaptop =
         hostname:
@@ -43,11 +56,19 @@
     {
       nixosConfigurations = lib.genAttrs hostnames mkLaptop;
 
+      packages.${system}.share-eth = share-eth;
+
+      apps.${system}.share-eth = {
+        type = "app";
+        program = "${share-eth}/bin/share-eth";
+      };
+
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
           git-crypt
           ssh-to-age
           openssl
+          share-eth
         ];
       };
     };
