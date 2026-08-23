@@ -93,6 +93,14 @@ id_ed25519 SSH keys was used to generate the laptop age keys required on the lap
 nix-shell -p mkpasswd --run 'echo -n "yourpassword" | mkpasswd -s' | tr -d '\n'
 ```
 
+## Browsers
+
+Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block. Chromium only gets the same privacy extensions. LibreWolf is unmanaged and still opens YouTube.
+
+YouTube is blocked in the browser, not via DNS or the firewall. Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`). `programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
+
+Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
+
 ## Speakers
 
 Internal speakers stay off so classroom machines stay quiet. 3.5mm headphones, USB/Bluetooth headsets, and HDMI audio still work.

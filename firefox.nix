@@ -20,6 +20,17 @@ in
         StartPage = "homepage";
       };
 
+      WebsiteFilter = {
+        Block = [
+          "*://youtube.com/*"
+          "*://*.youtube.com/*"
+          "*://youtu.be/*"
+          "*://*.youtu.be/*"
+          "*://youtube-nocookie.com/*"
+          "*://*.youtube-nocookie.com/*"
+        ];
+      };
+
       SearchEngines = {
         Add = [
           {

@@ -19,6 +19,7 @@ in
     ./anon.nix
     ./netbird.nix
     ./firefox.nix
+    ./chromium.nix
     ./inkscape.nix
     ./speakers.nix
     ./autoupgrade.nix
