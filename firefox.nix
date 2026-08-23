@@ -36,6 +36,12 @@ in
       };
 
       ExtensionSettings = {
+        # Qwant — required so search actually uses Qwant
+        # https://addons.mozilla.org/firefox/addon/qwantcom-for-firefox/
+        "qwantcomforfirefox@jetpack" = {
+          install_url = amoLatest "qwantcom-for-firefox";
+          installation_mode = "force_installed";
+        };
         # uBlock Origin — https://github.com/gorhill/uBlock#ublock-origin
         "uBlock0@raymondhill.net" = {
           install_url = amoLatest "ublock-origin";

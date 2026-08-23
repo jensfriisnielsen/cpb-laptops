@@ -19,6 +19,8 @@ The laptop should be connected to Netbird automatically
 nixos-rebuild switch --flake .#koderup1 --target-host root@koderup1.netbird.cloud
 ```
 
+Managed laptops also run `system.autoUpgrade` daily (around 17:30, with a random delay). They fetch `github:jensfriisnielsen/cpb-laptops` and `switch`.
+
 
 ## Installing NixOS
 

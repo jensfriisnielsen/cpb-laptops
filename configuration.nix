@@ -19,7 +19,9 @@ in
     ./anon.nix
     ./netbird.nix
     ./firefox.nix
+    ./inkscape.nix
     ./speakers.nix
+    ./autoupgrade.nix
   ];
 
   services.flatpak.enable = true;

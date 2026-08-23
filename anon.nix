@@ -12,7 +12,6 @@
       chromium
       doggo
       gimp
-      inkscape
       krita
       libreoffice
       librewolf
