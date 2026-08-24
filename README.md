@@ -22,6 +22,8 @@ Reconfigure it via:
 
 ```sh
 nixos-rebuild switch --flake .#koderup1 --target-host root@koderup1.netbird.cloud
+# or
+just rebuild koderup1
 ```
 
 #### Autoupgrade

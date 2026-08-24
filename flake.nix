@@ -66,6 +66,7 @@
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
           git-crypt
+          just
           ssh-to-age
           openssl
           share-eth
