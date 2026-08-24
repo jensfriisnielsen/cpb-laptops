@@ -19,43 +19,31 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       hostnames = map (i: "koderup${toString i}") (lib.range 1 40);
-      # Hostname -> other hostname whose hosts/<name>/ tree to reuse.
-      hostFrom = import ./hosts/from.nix;
 
       hostDir = name: ./hosts + "/${name}";
-
-      hardwareSource = hostname: hostFrom.${hostname} or hostname;
 
       facterFor =
         hostname:
         let
-          source = hardwareSource hostname;
           local = hostDir hostname + "/facter.json";
-          inherited = hostDir source + "/facter.json";
         in
         if builtins.pathExists local then
           local
-        else if source != hostname && builtins.pathExists inherited then
-          inherited
         else if builtins.pathExists ./facter.json then
           ./facter.json
         else
           throw ''
             Missing hardware report for ${hostname}.
-            Add hosts/${hostname}/facter.json, inherit via hosts/from.nix, or keep ./facter.json as the fleet default.
+            Add hosts/${hostname}/facter.json or keep ./facter.json as the fleet default.
             nixos-anywhere --generate-hardware-config nixos-facter ./hosts/${hostname}/facter.json
           '';
 
-      # Host NixOS modules: inherited directory first, then this host's default.nix.
       hostModules =
         hostname:
         let
-          source = hardwareSource hostname;
-          inheritedNix = hostDir source + "/default.nix";
           ownNix = hostDir hostname + "/default.nix";
         in
-        lib.optional (source != hostname && builtins.pathExists inheritedNix) inheritedNix
-        ++ lib.optional (builtins.pathExists ownNix) ownNix;
+        lib.optional (builtins.pathExists ownNix) ownNix;
 
       # Administrator laptop only: share WiFi over Ethernet to installer machines.
       share-eth = pkgs.writeShellApplication {

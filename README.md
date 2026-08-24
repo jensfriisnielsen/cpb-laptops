@@ -67,7 +67,7 @@ Hardware reports: most machines use the fleet `facter.json`. For a different cha
 nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-facter ./hosts/koderup12/facter.json --extra-files nixos-anywhere-extra-files --flake .#koderup12 --target-host root@10.43.0.10
 ```
 
-Optional NixOS settings for that machine go in `hosts/koderup12/default.nix` (a normal module). Same-chassis machines can reuse that folder by setting `koderup13 = "koderup12";` in `hosts/from.nix` (facter + that module). To reuse only Nix settings, `imports = [ ../koderup12 ];` from the other host’s `default.nix` instead (do not combine that with `from.nix` for the same folder).
+Optional NixOS settings for that machine go in `hosts/koderup12/default.nix` (a normal module). To reuse another host, symlink `facter.json` or `imports = [ ../koderup12 ];` from that host’s `default.nix`.
 
 #### Share WiFi over Ethernet
 
@@ -149,6 +149,7 @@ Laptops come preconfigured with Wireguard networking ("VPN") based on [netbird](
 Enroll your own device using Google as SSO.
 Ask for the account.
 
+![netbird](docs/netbird-online.png)
 
 #### Inkscape
 
@@ -163,6 +164,8 @@ Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and
 They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
+
+![browser-configured](docs/browser-configured.png)
 
 YouTube is blocked in the browser via policies, not via DNS or the firewall.
 Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
