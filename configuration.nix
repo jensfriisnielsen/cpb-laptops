@@ -33,6 +33,20 @@ in
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "anon";
   services.desktopManager.gnome.enable = true;
+  # Dash / dock launchers (default only; users can add/remove).
+  programs.dconf.profiles.user.databases = [
+    {
+      settings."org/gnome/shell" = {
+        favorite-apps = [
+          "firefox.desktop"
+          "brave-browser.desktop"
+          "org.inkscape.Inkscape.desktop"
+          "org.kde.krita.desktop"
+        ];
+      };
+    }
+  ];
+
   # Configure keymap in X11
   services.xserver.xkb.layout = "dk";
   services.xserver.xkb.variant = "";
@@ -74,16 +88,31 @@ in
       KbdInteractiveAuthentication = false;
       PermitRootLogin = "yes";
       AllowUsers = [ "root" "admin" ];
-      #MaxAuthTries = 3;
-      #PerSourcePenalties = "crash:3600s authfail:3600s max:86400s";
+      MaxAuthTries = 3;
+      PerSourcePenalties = "crash:3600s authfail:3600s max:86400s";
     };
   };
 
   environment.systemPackages = with pkgs; [
+    bat # like cat
+    brave # see ./chromium.nix
+    chromium # see ./chromium.nix
     curl
+    doggo # dns
+    #firefox # see ./firefox.nix
+    gimp
     git
-    vim
+    #inkscape # see ./inkscape.nix
+    krita # paint https://krita.org/en/
+    libreoffice
+    librewolf # unmanaged browser
+    magic-wormhole # wormhole send anywhere
+    python3
+    termshark # like wireshark just in the terminal
     tmux
+    tree
+    unp # unpack any archive
+    vim
   ];
 
   users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;

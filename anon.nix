@@ -7,19 +7,6 @@
     packages = with pkgs; [
       agg # gifs from asciinema
       asciinema # gifs and such from the terminal
-      bat # like cat
-      brave
-      chromium
-      doggo
-      gimp
-      krita
-      libreoffice
-      librewolf
-      python3
-      tree
-      termshark # like wireshark just in the terminal
-      unp # unpack any archive
-      magic-wormhole # wormhole send anywhere
     ];
     password = "";
   };

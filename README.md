@@ -1,7 +1,7 @@
 # cpj-laptops
 
 
-## Slides
+## Docs
 
 A reveal.js deck on NixOS for teaching laptops lives in [`slides/`](slides/).
 Open [`slides/index.html`](slides/index.html) in a browser.
@@ -11,18 +11,43 @@ See [`slides/README.md`](slides/README.md) for navigation keys and how to copy t
 firefox slides/index.html
 ```
 
-## Reconfiguring NixOS
+## Administration
 
-The laptop should be connected to Netbird automatically
+You need an SSH key and [netbird](#netbird) configured.
+
+### Reconfiguring NixOS
+
+The laptops should be connected to Netbird automatically.
+Reconfigure it via:
 
 ```sh
 nixos-rebuild switch --flake .#koderup1 --target-host root@koderup1.netbird.cloud
 ```
 
+#### Autoupgrade
+
 Managed laptops also run `system.autoUpgrade` daily (around 17:30, with a random delay). They fetch `github:jensfriisnielsen/cpb-laptops` and `switch`.
 
+Force an upgrade from the laptop:
 
-## Installing NixOS
+```sh
+su admin
+sudo systemctl start nixos-upgrade.service
+```
+
+### Resetting laptops
+
+The Dash (dock) defaults to Firefox, Brave, Inkscape, and Krita. Users can pin extra apps or remove these.
+
+Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
+
+```sh
+dconf reset /org/gnome/shell/favorite-apps
+```
+
+The Dash should update immediately; no reboot. If it does not, check `dconf read /org/gnome/shell/favorite-apps`. Deleting `~/.config/dconf/user` also resets the Dash, but wipes other GNOME settings too.
+
+### Installing NixOS (bootstrapping)
 
 Following this guide for nixos-anywhere https://nix-community.github.io/nixos-anywhere/quickstart.html
 
@@ -34,7 +59,7 @@ nix run github:nix-community/nixos-anywhere -- --extra-files nixos-anywhere-extr
 
 Replace `10.43.0.10` with the address in the DHCP leases file.
 
-## Share WiFi over Ethernet
+#### Share WiFi over Ethernet
 
 Administrator laptop only (GNOME/NetworkManager). This does **not** change managed laptop configs.
 
@@ -69,7 +94,7 @@ Enter the development environment
 nix develop
 ```
 
-## Secrets
+### Secrets
 
 Unlock the git-crypt encrypted secrets required for nixos-anywhere
 
@@ -87,13 +112,42 @@ netbird-setup-key is required to connect to netbird in order to be able to provi
 Note:
 id_ed25519 SSH keys was used to generate the laptop age keys required on the laptop for sops activation decryption.
 
-## HashedPasswords
+### HashedPasswords
 
 ```sh
 nix-shell -p mkpasswd --run 'echo -n "yourpassword" | mkpasswd -s' | tr -d '\n'
 ```
 
-## Browsers
+## Laptops
+
+### Users
+
+anon is the default (configured autologin)
+
+There is also admin with sudo.
+Ask for the password.
+
+### Software
+
+Check [`configuration.nix`](configuration.nix) under `environment.systemPackages`.
+Find available packages on [search.nixos.org](https://search.nixos.org/packages?channel=unstable)
+
+#### Netbird
+
+Laptops come preconfigured with Wireguard networking ("VPN") based on [netbird](https://netbird.io/)
+
+Enroll your own device using Google as SSO.
+Ask for the account.
+
+
+#### Inkscape
+
+Inkscape with extensions:
+
+- [Ink/Stitch](https://inkstitch.org/)
+
+
+### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
 Chromium only gets the same privacy extensions.
@@ -105,7 +159,7 @@ Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`)
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
 
-## Speakers
+### Speakers
 
 Internal speakers stay off so classroom machines stay quiet. 3.5mm headphones, USB/Bluetooth headsets, and HDMI audio still work.
 
