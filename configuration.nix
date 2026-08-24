@@ -38,6 +38,8 @@ in
     {
       settings."org/gnome/shell" = {
         favorite-apps = [
+          "org.gnome.Nautilus.desktop"
+          "org.gnome.Console.desktop"
           "firefox.desktop"
           "brave-browser.desktop"
           "org.inkscape.Inkscape.desktop"

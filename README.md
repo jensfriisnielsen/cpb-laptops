@@ -37,7 +37,7 @@ sudo systemctl start nixos-upgrade.service
 
 ### Resetting laptops
 
-The Dash (dock) defaults to Firefox, Brave, Inkscape, and Krita. Users can pin extra apps or remove these.
+The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Inkscape, and Krita. Users can pin extra apps or remove these.
 
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
@@ -150,12 +150,15 @@ Inkscape with extensions:
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-Chromium only gets the same privacy extensions.
+They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
+Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
 YouTube is blocked in the browser via policies, not via DNS or the firewall.
 Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
 `programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
+
+![youtube-blocked](docs/youtube-blocked.png)
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
 

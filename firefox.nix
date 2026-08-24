@@ -10,6 +10,7 @@ in
     enable = true;
     policies = {
       DontCheckDefaultBrowser = true;
+      ManagedBookmarks = import ./classroom-bookmarks.nix;
       # Skip Mozilla's first-run tour so the start page is what actually opens.
       OverrideFirstRunPage = "";
       OverridePostUpdatePage = "";

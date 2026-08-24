@@ -9,6 +9,7 @@
 {
   programs.chromium = {
     enable = true;
+    extraOpts.ManagedBookmarks = import ./classroom-bookmarks.nix;
     extensions = [
       "cjpalhdlnbpafiamejdnhcphjbkeiagm" # uBlock Origin
       "mdjildafknihdffpkfmmpnpoiajfjnjd" # Consent-O-Matic
