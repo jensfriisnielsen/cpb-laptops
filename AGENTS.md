@@ -6,3 +6,6 @@
 - The nixosConfigurations.koderup1 through koderup40 outputs are for managed laptops (same config, unique hostname)
 - Dont mix code for managed and administrator laptops
 - WiFi-to-Ethernet sharing for installer laptops is admin-only (`scripts/share-eth.sh`, `nix run .#share-eth`)
+- Keep browser settings identical with the following exceptions:
+  - librewolf is completely unmanaged
+  - chromium does not have blocked websites
