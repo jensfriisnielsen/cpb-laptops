@@ -3,7 +3,7 @@
 {
   users.users.anon = {
     isNormalUser = true;
-    description = "Anonymous";
+    description = "KodePirat";
     packages = with pkgs; [
       agg # gifs from asciinema
       asciinema # gifs and such from the terminal
