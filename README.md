@@ -77,10 +77,10 @@ Unlock the git-crypt encrypted secrets required for nixos-anywhere
 make unlock
 ```
 
-Edit sops secrets
+Edit sops secrets required for reconfiguring nixos
 
 ```sh
-sops secrets/sops-secrets.yaml
+sops secrets.yaml
 ```
 netbird-setup-key is required to connect to netbird in order to be able to provision NixOS over SSH
 
@@ -95,9 +95,13 @@ nix-shell -p mkpasswd --run 'echo -n "yourpassword" | mkpasswd -s' | tr -d '\n'
 
 ## Browsers
 
-Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block. Chromium only gets the same privacy extensions. LibreWolf is unmanaged and still opens YouTube.
+Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
+Chromium only gets the same privacy extensions.
+LibreWolf is unmanaged and still opens YouTube.
 
-YouTube is blocked in the browser, not via DNS or the firewall. Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`). `programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
+YouTube is blocked in the browser via policies, not via DNS or the firewall.
+Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
+`programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
 
