@@ -61,6 +61,14 @@ nix run github:nix-community/nixos-anywhere -- --extra-files nixos-anywhere-extr
 
 Replace `10.43.0.10` with the address in the DHCP leases file.
 
+Hardware reports: most machines use the fleet `facter.json`. For a different chassis, generate into that host folder:
+
+```sh
+nix run github:nix-community/nixos-anywhere -- --generate-hardware-config nixos-facter ./hosts/koderup12/facter.json --extra-files nixos-anywhere-extra-files --flake .#koderup12 --target-host root@10.43.0.10
+```
+
+Optional NixOS settings for that machine go in `hosts/koderup12/default.nix` (a normal module). Same-chassis machines can reuse that folder by setting `koderup13 = "koderup12";` in `hosts/from.nix` (facter + that module). To reuse only Nix settings, `imports = [ ../koderup12 ];` from the other host’s `default.nix` instead (do not combine that with `from.nix` for the same folder).
+
 #### Share WiFi over Ethernet
 
 Administrator laptop only (GNOME/NetworkManager). This does **not** change managed laptop configs.
