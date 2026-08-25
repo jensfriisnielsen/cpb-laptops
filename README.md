@@ -39,7 +39,7 @@ sudo systemctl start nixos-upgrade.service
 
 ### Resetting laptops
 
-The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Inkscape, and Krita. Users can pin extra apps or remove these.
+The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, and Krita. Users can pin extra apps or remove these.
 
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
@@ -161,7 +161,7 @@ Inkscape with extensions:
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
+They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
@@ -174,6 +174,17 @@ Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`)
 ![youtube-blocked](docs/youtube-blocked.png)
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
+
+### LEGO SPIKE
+
+Classroom robots use the official web app at [spike.legoeducation.com](https://spike.legoeducation.com/) (not Firefox — it needs Web Serial / Web Bluetooth).
+
+- **USB (supported):** open the app in **Chromium** or **Brave**, plug in the hub, and pick it in the serial chooser. Student user `anon` is in `dialout`; LEGO USB devices get seat `uaccess` via [`spike.nix`](spike.nix).
+- **Bluetooth (best-effort):** **Chromium only** (Brave has no Web Bluetooth). Pair in GNOME if needed. Chromium is started with `--enable-experimental-web-platform-features`; BlueZ runs with `Experimental = true`. Expect this to be flaky on Linux.
+- Brave Shields are disabled for the SPIKE origin so the app can load. Shared Chromium/Brave policies allow Web Serial / WebUSB for LEGO vendor ID `1684` on that site — check `chrome://policy` / `brave://policy` after a rebuild.
+- Chromium is pinned on the Dash for the Bluetooth path; USB also works from Brave.
+
+If the app fails to load, privacy extensions (uBlock, Privacy Badger) may need an allowlist for that origin — leave them until a hub test shows a break.
 
 ### Speakers
 

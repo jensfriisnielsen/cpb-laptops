@@ -18,4 +18,8 @@
     name = "scratch.mit.edu";
     url = "https://scratch.mit.edu/";
   }
+  {
+    name = "spike.legoeducation.com";
+    url = "https://spike.legoeducation.com/";
+  }
 ]

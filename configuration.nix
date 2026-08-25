@@ -20,6 +20,7 @@ in
     ./netbird.nix
     ./firefox.nix
     ./chromium.nix
+    ./spike.nix
     ./inkscape.nix
     ./speakers.nix
     ./autoupgrade.nix
@@ -42,6 +43,7 @@ in
           "org.gnome.Console.desktop"
           "firefox.desktop"
           "brave-browser.desktop"
+          "chromium-browser.desktop"
           "org.inkscape.Inkscape.desktop"
           "org.kde.krita.desktop"
         ];
@@ -98,7 +100,10 @@ in
   environment.systemPackages = with pkgs; [
     bat # like cat
     brave # see ./chromium.nix
-    chromium # see ./chromium.nix
+    # Web Bluetooth on Linux needs the experimental platform flag (SPIKE BT).
+    (chromium.override {
+      commandLineArgs = "--enable-experimental-web-platform-features";
+    })
     curl
     doggo # dns
     #firefox # see ./firefox.nix
