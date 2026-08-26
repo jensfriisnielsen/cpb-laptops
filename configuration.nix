@@ -21,6 +21,7 @@ in
     ./firefox.nix
     ./chromium.nix
     ./spike.nix
+    ./microbit.nix
     ./inkscape.nix
     ./speakers.nix
     ./autoupgrade.nix

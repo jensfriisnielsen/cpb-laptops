@@ -22,4 +22,8 @@
     name = "spike.legoeducation.com";
     url = "https://spike.legoeducation.com/";
   }
+  {
+    name = "makecode.microbit.org";
+    url = "https://makecode.microbit.org/";
+  }
 ]

@@ -161,7 +161,7 @@ Inkscape with extensions:
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
+They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
@@ -185,6 +185,14 @@ Classroom robots use the official web app at [spike.legoeducation.com](https://s
 - Chromium is pinned on the Dash for the Bluetooth path; USB also works from Brave.
 
 If the app fails to load, privacy extensions (uBlock, Privacy Badger) may need an allowlist for that origin — leave them until a hub test shows a break.
+
+### micro:bit
+
+Classroom micro:bits use [makecode.microbit.org](https://makecode.microbit.org/) (also [python.microbit.org](https://python.microbit.org/)). Not Firefox — it has no WebUSB.
+
+- **USB:** open the editor in **Chromium** or **Brave**, plug in with a data cable (not charge-only), and pick **BBC micro:bit CMSIS-DAP** in the WebUSB chooser. micro:bit USB devices get seat `uaccess` via [`microbit.nix`](microbit.nix) (vendor `0d28`). Student user `anon` is in `dialout` for `/dev/ttyACM*`.
+- If the chooser says the device is already paired and in use, quit Chromium fully and connect again (or remove the device from the lock-icon USB list). That usually means the browser could not open the device until udev granted access.
+- Unlike SPIKE, there is no Chromium enterprise WebUSB auto-allow for MakeCode — the site asks and the user picks the device.
 
 ### Speakers
 
