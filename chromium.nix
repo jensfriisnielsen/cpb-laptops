@@ -1,6 +1,6 @@
 # Chromium-family policies.
 # programs.chromium writes the same JSON to Chromium, Chrome, and Brave.
-# Shared: privacy extensions, bookmarks, and SPIKE Web Serial/WebUSB.
+# Shared: privacy extensions, bookmarks, and SPIKE / micro:bit Web Serial/WebUSB.
 # Brave-only classroom policy lives in a separate file so Chromium does not
 # get Qwant or the YouTube URL block.
 # https://wiki.nixos.org/wiki/Chromium
@@ -9,8 +9,14 @@
 
 let
   spikeOrigin = "https://spike.legoeducation.com";
+  microbitOrigins = [
+    "https://makecode.microbit.org"
+    "https://python.microbit.org"
+  ];
   # LEGO USB vendor ID (0x0694). Omitting product_id covers Prime, Essential, DFU.
   legoVendorId = 1684;
+  # BBC micro:bit DAPLink vendor ID (0x0d28).
+  microbitVendorId = 3368;
 in
 {
   programs.chromium = {
@@ -20,17 +26,25 @@ in
       # 3 = AskSerial / AskWebBluetooth — sites may request access.
       DefaultSerialGuardSetting = 3;
       DefaultWebBluetoothGuardSetting = 3;
-      SerialAskForUrls = [ spikeOrigin ];
+      SerialAskForUrls = [ spikeOrigin ] ++ microbitOrigins;
       SerialAllowUsbDevicesForUrls = [
         {
           urls = [ spikeOrigin ];
           devices = [ { vendor_id = legoVendorId; } ];
+        }
+        {
+          urls = microbitOrigins;
+          devices = [ { vendor_id = microbitVendorId; } ];
         }
       ];
       WebUsbAllowDevicesForUrls = [
         {
           urls = [ spikeOrigin ];
           devices = [ { vendor_id = legoVendorId; } ];
+        }
+        {
+          urls = microbitOrigins;
+          devices = [ { vendor_id = microbitVendorId; } ];
         }
       ];
     };

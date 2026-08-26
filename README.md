@@ -190,9 +190,9 @@ If the app fails to load, privacy extensions (uBlock, Privacy Badger) may need a
 
 Classroom micro:bits use [makecode.microbit.org](https://makecode.microbit.org/) (also [python.microbit.org](https://python.microbit.org/)). Not Firefox — it has no WebUSB.
 
-- **USB:** open the editor in **Chromium** or **Brave**, plug in with a data cable (not charge-only), and pick **BBC micro:bit CMSIS-DAP** in the WebUSB chooser. micro:bit USB devices get seat `uaccess` via [`microbit.nix`](microbit.nix) (vendor `0d28`). Student user `anon` is in `dialout` for `/dev/ttyACM*`.
+- **USB:** open the editor in **Chromium** or **Brave**, plug in with a data cable (not charge-only), and connect. micro:bit USB devices get seat `uaccess` via [`microbit.nix`](microbit.nix) (vendor `0d28`). Student user `anon` is in `dialout` for `/dev/ttyACM*`.
 - If the chooser says the device is already paired and in use, quit Chromium fully and connect again (or remove the device from the lock-icon USB list). That usually means the browser could not open the device until udev granted access.
-- Unlike SPIKE, there is no Chromium enterprise WebUSB auto-allow for MakeCode — the site asks and the user picks the device.
+- Shared Chromium/Brave policies allow Web Serial / WebUSB for micro:bit vendor ID `3368` (`0d28`) on MakeCode and the Python editor — check `chrome://policy` / `brave://policy` after a rebuild. Connect may still open a chooser if the editor calls `requestDevice()`.
 
 ### Speakers
 
