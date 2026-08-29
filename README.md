@@ -150,6 +150,25 @@ anon is the default (configured autologin)
 There is also admin with sudo.
 Ask for the password.
 
+#### GNOME Keyring
+
+`anon` has an empty login password and GDM autologin, so PAM never unlocks a keyring. Without a default collection, apps prompt for a password for a new keyring.
+
+[`anon.nix`](anon.nix) runs `anon-empty-keyring.service` before GDM. If (and only if) the files are missing, it creates an unencrypted default keyring at `~/.local/share/keyrings/Default_keyring.keyring` and a `default` pointer to that file. Existing keyring files are never deleted or rewritten, so autoupgrade cannot wipe secrets apps have stored.
+
+The seed is not named `login.keyring`. GNOME Keyring re-encrypts that collection to the login password on write, which autologin never provides.
+
+The keyring is stored unencrypted on disk. That matches this classroom account: empty password, autologin, no disk encryption.
+
+Laptops that already have a passworded keyring keep prompting until it is removed. As `anon` (or `sudo -u anon`), after logging out or rebooting so the session can pick up a new default:
+
+```sh
+rm -f ~/.local/share/keyrings/login.keyring ~/.local/share/keyrings/default
+# then reboot, or log out so autologin runs again
+```
+
+If `Default_keyring.keyring` is also missing after that, the next boot recreates the empty default. Do not delete `Default_keyring.keyring` if it already holds secrets you want to keep.
+
 ### Software
 
 Check [`configuration.nix`](configuration.nix) under `environment.systemPackages`.
