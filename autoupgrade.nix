@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 let
   koderupUpgrade = pkgs.writeShellApplication {
     name = "koderup-upgrade";
@@ -39,12 +39,9 @@ let
 
   koderupUpgradeGui = pkgs.writeShellApplication {
     name = "koderup-upgrade-gui";
-    runtimeInputs = with pkgs; [
-      koderupUpgrade
-      polkit
-    ];
+    runtimeInputs = [ koderupUpgrade ];
     text = ''
-      pkexec --disable-internal-agent koderup-upgrade || true
+      ${config.security.wrapperDir}/pkexec --disable-internal-agent koderup-upgrade || true
       echo
       read -r -p "Tryk Enter for at lukke..." _
     '';
