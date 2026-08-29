@@ -82,4 +82,7 @@ in
     koderupUpgradePolicy
     koderupUpgradeDesktop
   ];
+
+  # pkexec from the nix store is not setuid; the GUI upgrade launcher needs this.
+  security.polkit.enablePkexecWrapper = true;
 }
