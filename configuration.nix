@@ -18,6 +18,7 @@ in
     ./admin.nix
     ./anon.nix
     ./netbird.nix
+    ./dns-block.nix
     ./firefox.nix
     ./chromium.nix
     ./spike.nix

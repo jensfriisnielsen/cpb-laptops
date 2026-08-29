@@ -171,6 +171,9 @@ YouTube is blocked in the browser via policies, not via DNS or the firewall.
 Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
 `programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
 
+Other sites are blocked fleet-wide via DNS in [`dns-block.nix`](dns-block.nix): each listed domain and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit the `blockedDomains` list there to add or remove names. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
+After a rebuild, check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
+
 ![youtube-blocked](docs/youtube-blocked.png)
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.

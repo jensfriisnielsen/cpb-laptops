@@ -23,6 +23,8 @@ in
     enable = true;
     extraOpts = {
       ManagedBookmarks = import ./classroom-bookmarks.nix;
+      # Keep classroom browsers on system DNS so /etc/hosts blocks apply.
+      DnsOverHttpsMode = "off";
       # 3 = AskSerial / AskWebBluetooth — sites may request access.
       DefaultSerialGuardSetting = 3;
       DefaultWebBluetoothGuardSetting = 3;

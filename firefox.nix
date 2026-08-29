@@ -15,6 +15,10 @@ in
       OverrideFirstRunPage = "";
       OverridePostUpdatePage = "";
 
+      DNSOverHTTPS = {
+        Enabled = false;
+      };
+
       Homepage = {
         URL = "https://programmering.notion.site/";
         Locked = true;
