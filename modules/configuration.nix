@@ -75,6 +75,9 @@ in
     LC_TIME = "da_DK.UTF-8";
   };
 
+  time.timeZone = "Europe/Copenhagen";
+  services.timesyncd.enable = true;
+
   boot.loader.grub = {
     # no need to set devices, disko will add all devices that have a EF02 partition to the list already
     # devices = [ ];
