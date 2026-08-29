@@ -1,5 +1,16 @@
 { pkgs, config, ... }:
 let
+  postUpgrade = pkgs.writeShellApplication {
+    name = "koderup-post-upgrade";
+    runtimeInputs = with pkgs; [
+      coreutils
+      dconf
+      dbus
+      util-linux
+    ];
+    text = builtins.readFile ./post-upgrade.sh;
+  };
+
   koderupUpgrade = pkgs.writeShellApplication {
     name = "koderup-upgrade";
     runtimeInputs = with pkgs; [ systemd ];
@@ -78,7 +89,18 @@ in
     koderupUpgradeGui
     koderupUpgradePolicy
     koderupUpgradeDesktop
+    postUpgrade
   ];
+
+  systemd.services.koderup-post-upgrade = {
+    description = "Post-upgrade hooks for managed laptops";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${postUpgrade}/bin/koderup-post-upgrade";
+    };
+  };
+
+  systemd.services.nixos-upgrade.onSuccess = [ "koderup-post-upgrade.service" ];
 
   # pkexec from the nix store is not setuid; the GUI upgrade launcher needs this.
   security.polkit.enablePkexecWrapper = true;

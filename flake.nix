@@ -65,7 +65,7 @@
           modules = [
             disko.nixosModules.disko
             sops-nix.nixosModules.sops
-            ./configuration.nix
+            ./modules/configuration.nix
             nixos-facter-modules.nixosModules.facter
             {
               networking.hostName = hostname;

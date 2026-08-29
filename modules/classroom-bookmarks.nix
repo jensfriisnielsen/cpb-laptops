@@ -26,4 +26,8 @@
     name = "makecode.microbit.org";
     url = "https://makecode.microbit.org/";
   }
+  {
+    name = "github.com/jensfriisnielsen/cpb-laptops";
+    url = "https://github.com/jensfriisnielsen/cpb-laptops";
+  }
 ]

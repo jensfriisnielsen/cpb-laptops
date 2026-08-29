@@ -156,7 +156,7 @@ Ask for the password.
 
 `anon` has an empty login password and GDM autologin, so PAM never unlocks a keyring. Without a default collection, apps prompt for a password for a new keyring.
 
-[`anon.nix`](anon.nix) runs `anon-empty-keyring.service` before GDM. If (and only if) the files are missing, it creates an unencrypted default keyring at `~/.local/share/keyrings/Default_keyring.keyring` and a `default` pointer to that file. Existing keyring files are never deleted or rewritten, so autoupgrade cannot wipe secrets apps have stored.
+[`modules/anon.nix`](modules/anon.nix) runs `anon-empty-keyring.service` before GDM. If (and only if) the files are missing, it creates an unencrypted default keyring at `~/.local/share/keyrings/Default_keyring.keyring` and a `default` pointer to that file. Existing keyring files are never deleted or rewritten, so autoupgrade cannot wipe secrets apps have stored.
 
 The seed is not named `login.keyring`. GNOME Keyring re-encrypts that collection to the login password on write, which autologin never provides.
 
@@ -173,7 +173,7 @@ If `Default_keyring.keyring` is also missing after that, the next boot recreates
 
 ### Software
 
-Check [`configuration.nix`](configuration.nix) under `environment.systemPackages`.
+Check [`modules/configuration.nix`](modules/configuration.nix) under `environment.systemPackages`.
 Find available packages on [search.nixos.org](https://search.nixos.org/packages?channel=unstable)
 
 #### Netbird
@@ -195,19 +195,19 @@ Inkscape with extensions:
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-They also get a locked **Classroom** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org), defined in [`classroom-bookmarks.nix`](classroom-bookmarks.nix).
+They also get a locked **Pirater** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops), defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
 ![browser-configured](docs/browser-configured.png)
 
 YouTube is blocked in the browser via policies, not via DNS or the firewall.
-Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
+Toggle it by editing the lists in [`modules/firefox.nix`](modules/firefox.nix) (`WebsiteFilter`) and [`modules/chromium.nix`](modules/chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
 `programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
 
 ![youtube-blocked](docs/youtube-blocked.png)
 
-Other sites are blocked fleet-wide via DNS in [`dns-block.nix`](dns-block.nix): each listed domain and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit the `blockedDomains` list there to add or remove names. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
+Other sites are blocked fleet-wide via DNS in [`modules/dns-block.nix`](modules/dns-block.nix): each listed domain and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit the `blockedDomains` list there to add or remove names. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
 After a rebuild, check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
 
 ![facebook-blocked](docs/facebook-dns-blocked.png)
@@ -218,7 +218,7 @@ Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brav
 
 Classroom robots use the official web app at [spike.legoeducation.com](https://spike.legoeducation.com/) (not Firefox — it needs Web Serial / Web Bluetooth).
 
-- **USB (supported):** open the app in **Chromium** or **Brave**, plug in the hub, and pick it in the serial chooser. Student user `anon` is in `dialout`; LEGO USB devices get seat `uaccess` via [`spike.nix`](spike.nix).
+- **USB (supported):** open the app in **Chromium** or **Brave**, plug in the hub, and pick it in the serial chooser. Student user `anon` is in `dialout`; LEGO USB devices get seat `uaccess` via [`modules/spike.nix`](modules/spike.nix).
 - **Bluetooth (best-effort):** **Chromium only** (Brave has no Web Bluetooth). Pair in GNOME if needed. Chromium is started with `--enable-experimental-web-platform-features`; BlueZ runs with `Experimental = true`. Expect this to be flaky on Linux.
 - Brave Shields are disabled for the SPIKE origin so the app can load. Shared Chromium/Brave policies allow Web Serial / WebUSB for LEGO vendor ID `1684` on that site — check `chrome://policy` / `brave://policy` after a rebuild.
 - Chromium is pinned on the Dash for the Bluetooth path; USB also works from Brave.
@@ -229,7 +229,7 @@ If the app fails to load, privacy extensions (uBlock, Privacy Badger) may need a
 
 Classroom micro:bits use [makecode.microbit.org](https://makecode.microbit.org/) (also [python.microbit.org](https://python.microbit.org/)). Not Firefox — it has no WebUSB.
 
-- **USB:** open the editor in **Chromium** or **Brave**, plug in with a data cable (not charge-only), and connect. micro:bit USB devices get seat `uaccess` via [`microbit.nix`](microbit.nix) (vendor `0d28`). Student user `anon` is in `dialout` for `/dev/ttyACM*`.
+- **USB:** open the editor in **Chromium** or **Brave**, plug in with a data cable (not charge-only), and connect. micro:bit USB devices get seat `uaccess` via [`modules/microbit.nix`](modules/microbit.nix) (vendor `0d28`). Student user `anon` is in `dialout` for `/dev/ttyACM*`.
 - If the chooser says the device is already paired and in use, quit Chromium fully and connect again (or remove the device from the lock-icon USB list). That usually means the browser could not open the device until udev granted access.
 - Shared Chromium/Brave policies allow Web Serial / WebUSB for micro:bit vendor ID `3368` (`0d28`) on MakeCode and the Python editor — check `chrome://policy` / `brave://policy` after a rebuild. Connect may still open a chooser if the editor calls `requestDevice()`.
 
@@ -237,7 +237,7 @@ Classroom micro:bits use [makecode.microbit.org](https://makecode.microbit.org/)
 
 Internal speakers stay off so classroom machines stay quiet. 3.5mm headphones, USB/Bluetooth headsets, and HDMI audio still work.
 
-[`speakers.nix`](speakers.nix) tells WirePlumber to disable the ALSA UCM sink whose name matches `HiFi__Speaker__sink`.
+[`modules/speakers.nix`](modules/speakers.nix) tells WirePlumber to disable the ALSA UCM sink whose name matches `HiFi__Speaker__sink`.
 On these ThinkPad T14s Gen 2a machines, speakers and headphones are two UCM devices on the same analog card (`Realtek ALC257`).
 Disabling only that Speaker sink leaves the Headphones sink alone.
 
