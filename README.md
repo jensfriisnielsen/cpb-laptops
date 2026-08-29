@@ -43,6 +43,7 @@ sudo systemctl start nixos-upgrade.service
 ```
 
 Laptops that were set up before **Opdater system** was added to the default Dash need a one-time reset (as the logged-in user, or `sudo -u anon`):
+This reset is now automatic with the system upgrade (but not when pushing `just rebuild`).
 
 ```sh
 dconf reset /org/gnome/shell/favorite-apps
@@ -171,10 +172,15 @@ rm -f ~/.local/share/keyrings/login.keyring ~/.local/share/keyrings/default
 
 If `Default_keyring.keyring` is also missing after that, the next boot recreates the empty default. Do not delete `Default_keyring.keyring` if it already holds secrets you want to keep.
 
+### WIFI
+
+BAL-Internet is added as an automatic profile to NetworkManager.
+
 ### Software
 
 Check [`modules/configuration.nix`](modules/configuration.nix) under `environment.systemPackages`.
 Find available packages on [search.nixos.org](https://search.nixos.org/packages?channel=unstable)
+
 
 #### Netbird
 
