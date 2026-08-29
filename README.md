@@ -32,6 +32,8 @@ Managed laptops also run `system.autoUpgrade` daily (around 17:30, with a random
 
 Force an upgrade from the laptop:
 
+![update-icon](docs/update-icon.png)
+
 - **Dash:** click **Opdater system** (last icon on the dock). GNOME Console opens, asks for the **Admin** password, runs `nixos-upgrade.service`, and shows the journal until you press Enter.
 - **CLI:**
 
