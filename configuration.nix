@@ -48,6 +48,7 @@ in
           "chromium-browser.desktop"
           "org.inkscape.Inkscape.desktop"
           "org.kde.krita.desktop"
+          "koderup-upgrade.desktop"
         ];
       };
     }

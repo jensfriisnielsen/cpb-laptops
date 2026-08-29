@@ -32,14 +32,25 @@ Managed laptops also run `system.autoUpgrade` daily (around 17:30, with a random
 
 Force an upgrade from the laptop:
 
+- **Dash:** click **Opdater system** (last icon on the dock). GNOME Console opens, asks for the **Admin** password, runs `nixos-upgrade.service`, and shows the journal until you press Enter.
+- **CLI:**
+
 ```sh
 su admin
 sudo systemctl start nixos-upgrade.service
 ```
 
+Laptops that were set up before **Opdater system** was added to the default Dash need a one-time reset (as the logged-in user, or `sudo -u anon`):
+
+```sh
+dconf reset /org/gnome/shell/favorite-apps
+```
+
+See [Resetting laptops](#resetting-laptops) for the full default Dash list.
+
 ### Resetting laptops
 
-The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, and Krita. Users can pin extra apps or remove these.
+The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, and **Opdater system**. Users can pin extra apps or remove these.
 
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
@@ -57,6 +68,8 @@ The community installer image needs internet. On the administrator laptop, share
 
 ```sh
 nix run github:nix-community/nixos-anywhere -- --extra-files nixos-anywhere-extra-files --flake .#koderup1 --target-host root@10.43.0.10
+# or
+just provision koderup1 10.43.0.10
 ```
 
 Replace `10.43.0.10` with the address in the DHCP leases file.
@@ -171,10 +184,12 @@ YouTube is blocked in the browser via policies, not via DNS or the firewall.
 Toggle it by editing the lists in [`firefox.nix`](firefox.nix) (`WebsiteFilter`) and [`chromium.nix`](chromium.nix) (`URLBlocklist` in the Brave-only `classroom.json`).
 `programs.chromium` writes policies to both Chromium and Brave, so homepage, search, and YouTube stay in `/etc/brave/policies/managed/classroom.json` instead of `extraOpts`.
 
+![youtube-blocked](docs/youtube-blocked.png)
+
 Other sites are blocked fleet-wide via DNS in [`dns-block.nix`](dns-block.nix): each listed domain and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit the `blockedDomains` list there to add or remove names. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
 After a rebuild, check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
 
-![youtube-blocked](docs/youtube-blocked.png)
+![facebook-blocked](docs/facebook-dns-blocked.png)
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
 
