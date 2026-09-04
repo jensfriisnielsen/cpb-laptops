@@ -239,12 +239,26 @@ Bluetooth is **Chromium only** (Brave has no Web Bluetooth) and often flaky on L
 | --- | --- |
 | The hub never appears in the chooser | Use Chromium or Brave, not Firefox. Unplug and plug the cable back in. Fully quit the browser (not just the tab) and open it again. |
 | You pick the hub and nothing happens | Same as above. The laptop must be allowed to use the USB serial device; that is set up in [`modules/spike.nix`](modules/spike.nix). |
-| Connect works, but updating the hub or sending a program fails (for example *“Der opstod en fejl under opdatering af hub-styresystem”*) | Unplug and plug the hub back in, stay on USB, and try again. The laptop now keeps the USB “ready” line on so the hub will answer; that used to fail in Chromium/Brave on Linux. |
+| Connect works, but updating the hub or sending a program fails (for example *“Der opstod en fejl under opdatering af hub-styresystem”*) | Unplug and plug the hub back in, stay on USB, and try again. The laptop now turns on DTR after the browser opens the port so the hub will answer; that used to fail in Chromium/Brave on Linux. |
+| Connect worked, then the cable dropped and reconnect fails (`FILE_ERROR_IN_USE` or *ProgramFlowResponse was not acknowledged*) | Fully quit Chromium and connect again. Nothing else should keep `/dev/ttyACM*` open while the app is disconnected. |
 
-LEGO’s app is built for Chromebooks, Windows, and macOS. On these laptops two extra pieces are required, both in [`modules/spike.nix`](modules/spike.nix):
+**How the browser talks to the hub**
 
-- **Permission to use the USB port.** Chromium’s sandbox does not keep the `dialout` group, so a udev `uaccess` rule is applied to the LEGO USB device *and* its serial port (`/dev/ttyACM*`). Without the serial-port rule, the chooser can show the hub but opening it does nothing.
-- **Keep the hub awake on the wire.** After Chromium opens the port, Linux leaves the DTR control line off. The hub then accepts the laptop’s bytes but never replies, so hub software updates time out waiting for MicroPython’s raw REPL. A small background service (`spike-serial-dtr`) holds DTR/RTS on and does not read from the port, so the web app still receives the hub’s answers.
+USB presents the hub as a virtual serial port (CDC ACM: `COM*` on Windows, `/dev/ttyACM*` on Linux). The web app uses the **Web Serial** API (Chromium/Brave only) at 115200 baud. Firefox has no Web Serial, so it cannot connect.
+
+That one serial link carries two different languages:
+
+- **Everyday use** (connect, run a Word Blocks / Python project) is LEGO’s binary hub protocol. The app sends framed packets and waits for replies such as `ProgramFlowResponse`.
+- **Hub software update** (hub-styresystem) switches the same port into **MicroPython raw REPL**. The app sends Ctrl-C / Ctrl-A and waits a few seconds for the banner `raw REPL; CTRL-B to exit`, then uploads files through that REPL. If the banner never arrives, the update-error popup appears.
+
+**DTR (Data Terminal Ready)** is a leftover modem control line on that serial port. Many STM32 USB-serial stacks (including SPIKE Prime) treat DTR as “a host is actually here”: they will accept USB writes with DTR off, but they will not send anything back. RTS is the matching “please send” line; we set both.
+
+LEGO documents Chrome on **Chromebooks, Windows, and macOS**. Those systems assert DTR when the browser opens the port (Windows `CreateFile` on a COM port, macOS / ChromeOS serial open). The same Web Serial JavaScript therefore just works there: connect and REPL both see replies.
+
+**Linux Chromium is different.** Opening `/dev/ttyACM*` and then applying Web Serial’s termios settings leaves DTR low. The chooser can succeed and the app can write Ctrl-A, but the hub stays silent, so REPL times out. [`modules/spike.nix`](modules/spike.nix) therefore:
+
+- Grants **seat `uaccess`** on the LEGO USB device *and* the tty. Chromium’s sandbox drops the `dialout` group, so group membership alone is not enough; without the tty rule the chooser shows the hub but selecting it does nothing.
+- Runs **`spike-serial-dtr`**, which finds Chromium/Brave’s existing file descriptor and turns DTR/RTS on. It must *not* keep its own open of the tty: that makes the kernel keep reading while the app is gone (stale packets, failed reconnect) and Chromium then logs `FILE_ERROR_IN_USE`.
 
 Brave Shields are disabled for the SPIKE site so the app can load. Shared Chromium/Brave policies allow Web Serial / WebUSB for LEGO vendor ID `1684` on that site — check `chrome://policy` / `brave://policy` after a rebuild.
 

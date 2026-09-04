@@ -6,6 +6,23 @@
 # connect in the app, then download programs or update hub software.
 # Full classroom notes: README.md “LEGO SPIKE”.
 #
+# How the link works
+# ------------------
+# The hub is USB CDC ACM (virtual serial, /dev/ttyACM*). The web app uses
+# Web Serial at 115200 (not Firefox). Same wire, two protocols:
+#   - LEGO binary framing for connect / run (ProgramFlowResponse, …)
+#   - MicroPython raw REPL for hub OS update: the JS sends Ctrl-C, Ctrl-A
+#     and waits for "raw REPL; CTRL-B to exit", then file-transfers.
+# STM32 CDC (SPIKE Prime) gates TX on DTR (and we also set RTS). With DTR
+# low the device still ACKs USB bulk OUT but sends no bulk IN, so REPL
+# times out and the hub OS error appears.
+#
+# Windows / macOS / Chromebooks assert DTR when Chromium opens the COM /
+# cu.usbmodem / CrOS serial node, so LEGO's supported browsers work
+# without extra helpers. Linux Chromium applies termios2 for baud/raw
+# mode and leaves DTR cleared, which is why only these NixOS laptops
+# needed a workaround.
+#
 # Two Linux problems this module fixes:
 #
 # 1) Chooser shows the hub but selecting it does nothing.
@@ -17,15 +34,11 @@
 #
 # 2) Connect works, but hub OS update / program upload fails
 #    (Danish: “Der opstod en fejl under opdatering af hub-styresystem”).
-#    The app speaks MicroPython raw REPL over the same USB serial. Chromium
-#    on Linux leaves DTR low after it configures the port; the hub then
-#    accepts writes but does not reply, so the app times out waiting for
-#    "raw REPL; CTRL-B to exit".
-#
-#    Do not keep our own open of the tty: cdc_acm keeps reading while the
-#    browser is gone, stale hub packets fill the kernel buffer, and the
-#    next connect gets ProgramFlowResponse Nack. Raise DTR only on a
-#    duplicate of Chromium/Brave's existing fd.
+#    spike-serial-dtr duplicates the browser's existing fd and asserts
+#    DTR/RTS. Do not keep our own open of the tty: cdc_acm keeps reading
+#    while the app is gone, the kernel buffer fills with hub telemetry,
+#    reconnect gets ProgramFlowResponse Nack, and Chromium logs
+#    FILE_ERROR_IN_USE.
 { pkgs, ... }:
 
 let
