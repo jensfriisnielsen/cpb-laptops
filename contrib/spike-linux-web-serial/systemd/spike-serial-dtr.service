@@ -1,0 +1,13 @@
+[Unit]
+Description=Keep LEGO SPIKE USB serial ready so the web app can update the hub
+Documentation=file:///usr/local/lib/spike-linux-web-serial/README.md
+After=systemd-udevd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/lib/spike-linux-web-serial/spike-serial-dtr.py
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

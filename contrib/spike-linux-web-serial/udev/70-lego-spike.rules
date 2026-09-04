@@ -1,0 +1,10 @@
+# LEGO Education SPIKE / MINDSTORMS hubs (vendor 0694 = 1684 decimal).
+# Vendor-wide so Prime, Essential, Inventor, and DFU modes all work.
+# Do not add Atmel 03eb:6124 (NXT DFU; collides with some Arduino boards).
+#
+# Filename must sort before 73-seat-late.rules (e.g. 70-…, not 99-…).
+# Chromium's sandbox drops the dialout group, so Web Serial needs
+# seat uaccess on the tty node (not only the USB device).
+SUBSYSTEM=="usb", ATTR{idVendor}=="0694", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0694", TAG+="uaccess"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0694", TAG+="uaccess", ENV{ID_MM_DEVICE_IGNORE}="1"
