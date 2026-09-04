@@ -222,14 +222,33 @@ Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brav
 
 ### LEGO SPIKE
 
-Classroom robots use the official web app at [spike.legoeducation.com](https://spike.legoeducation.com/) (not Firefox — it needs Web Serial / Web Bluetooth).
+Use the official web app at [spike.legoeducation.com](https://spike.legoeducation.com/) in **Chromium** or **Brave**. Firefox cannot talk to the hub.
 
-- **USB (supported):** open the app in **Chromium** or **Brave**, plug in the hub, and pick it in the serial chooser. Student user `anon` is in `dialout`; LEGO USB devices get seat `uaccess` via [`modules/spike.nix`](modules/spike.nix).
-- **Bluetooth (best-effort):** **Chromium only** (Brave has no Web Bluetooth). Pair in GNOME if needed. Chromium is started with `--enable-experimental-web-platform-features`; BlueZ runs with `Experimental = true`. Expect this to be flaky on Linux.
-- Brave Shields are disabled for the SPIKE origin so the app can load. Shared Chromium/Brave policies allow Web Serial / WebUSB for LEGO vendor ID `1684` on that site — check `chrome://policy` / `brave://policy` after a rebuild.
-- Chromium is pinned on the Dash for the Bluetooth path; USB also works from Brave.
+**On the laptop**
 
-If the app fails to load, privacy extensions (uBlock, Privacy Badger) may need an allowlist for that origin — leave them until a hub test shows a break.
+1. Open Chromium or Brave (Chromium is on the Dash).
+2. Plug the hub in with a USB data cable (not charge-only).
+3. In the app, connect and pick the hub in the serial chooser.
+4. You can then download programs and update the hub’s own software (hub-styresystem).
+
+Bluetooth is **Chromium only** (Brave has no Web Bluetooth) and often flaky on Linux. Pair in GNOME if you try it. Prefer USB. Chromium is started with `--enable-experimental-web-platform-features`; BlueZ runs with `Experimental = true`. Chromium is pinned on the Dash.
+
+**If it does not work**
+
+| What you see | What to try |
+| --- | --- |
+| The hub never appears in the chooser | Use Chromium or Brave, not Firefox. Unplug and plug the cable back in. Fully quit the browser (not just the tab) and open it again. |
+| You pick the hub and nothing happens | Same as above. The laptop must be allowed to use the USB serial device; that is set up in [`modules/spike.nix`](modules/spike.nix). |
+| Connect works, but updating the hub or sending a program fails (for example *“Der opstod en fejl under opdatering af hub-styresystem”*) | Unplug and plug the hub back in, stay on USB, and try again. The laptop now keeps the USB “ready” line on so the hub will answer; that used to fail in Chromium/Brave on Linux. |
+
+LEGO’s app is built for Chromebooks, Windows, and macOS. On these laptops two extra pieces are required, both in [`modules/spike.nix`](modules/spike.nix):
+
+- **Permission to use the USB port.** Chromium’s sandbox does not keep the `dialout` group, so a udev `uaccess` rule is applied to the LEGO USB device *and* its serial port (`/dev/ttyACM*`). Without the serial-port rule, the chooser can show the hub but opening it does nothing.
+- **Keep the hub awake on the wire.** After Chromium opens the port, Linux leaves the DTR control line off. The hub then accepts the laptop’s bytes but never replies, so hub software updates time out waiting for MicroPython’s raw REPL. A small background service (`spike-serial-dtr`) holds DTR/RTS on and does not read from the port, so the web app still receives the hub’s answers.
+
+Brave Shields are disabled for the SPIKE site so the app can load. Shared Chromium/Brave policies allow Web Serial / WebUSB for LEGO vendor ID `1684` on that site — check `chrome://policy` / `brave://policy` after a rebuild.
+
+If the app page itself fails to load, privacy extensions (uBlock, Privacy Badger) may need an allowlist for that origin — leave them until a hub test shows a break.
 
 ### micro:bit
 
