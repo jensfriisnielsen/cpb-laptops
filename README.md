@@ -1,5 +1,6 @@
 # cpj-laptops
 
+This project is free software under the [GNU General Public License v3.0 or later](LICENSE).
 
 ## Docs
 
@@ -259,6 +260,8 @@ LEGO documents Chrome on **Chromebooks, Windows, and macOS**. Those systems asse
 
 - Grants **seat `uaccess`** on the LEGO USB device *and* the tty. Chromium’s sandbox drops the `dialout` group, so group membership alone is not enough; without the tty rule the chooser shows the hub but selecting it does nothing.
 - Runs **`spike-serial-dtr`**, which finds Chromium/Brave’s existing file descriptor and turns DTR/RTS on. It must *not* keep its own open of the tty: that makes the kernel keep reading while the app is gone (stale packets, failed reconnect) and Chromium then logs `FILE_ERROR_IN_USE`.
+
+For other Linux distributions (Ubuntu, Fedora, Arch, …), the same udev rules, helper, and systemd unit are packaged with install scripts and a longer write-up in [`contrib/spike-linux-web-serial/`](contrib/spike-linux-web-serial/).
 
 Brave Shields are disabled for the SPIKE site so the app can load. Shared Chromium/Brave policies allow Web Serial / WebUSB for LEGO vendor ID `1684` on that site — check `chrome://policy` / `brave://policy` after a rebuild.
 
