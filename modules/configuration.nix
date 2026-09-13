@@ -28,6 +28,7 @@ in
     ./bambu-studio.nix
     ./speakers.nix
     ./autoupgrade.nix
+    ./kiosk.nix
   ];
 
   services.flatpak.enable = true;
@@ -52,6 +53,7 @@ in
           "org.kde.krita.desktop"
           "tinkercad.desktop"
           "com.bambulab.BambuStudio.desktop"
+          "koderup-kiosk.desktop"
           "koderup-upgrade.desktop"
         ];
       };

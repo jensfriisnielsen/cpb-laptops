@@ -55,7 +55,7 @@ See [Resetting laptops](#resetting-laptops) for the full default Dash list.
 
 ### Resetting laptops
 
-The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, and **Opdater system**. Users can pin extra apps or remove these.
+The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, **Kiosk**, and **Opdater system**. Users can pin extra apps or remove these.
 
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
@@ -113,6 +113,77 @@ nix run .#share-eth -- down
 Override the NIC with `ETH=enp0s31f6` if auto-detect picks the wrong device. From `nix develop`, `share-eth up` / `share-eth down` work the same.
 
 `down` is safe to run when sharing is already off. Do not wrap the whole command in `sudo`; the script prompts only for the firewall rules.
+
+### Kiosk-tilstand
+
+Kiosk starter Chromium i fuldskærm på den indloggede `anon`-session (GNOME). Den kan startes fra Dash-ikonet **Kiosk**, lokalt som `anon`, eller over SSH som `admin`/`root`. SSH slås **aldrig** fra.
+
+#### Hvad
+
+- Standard er **tilfældig** sværhedsgrad: et tilfældigt antal escapes tillades.
+- Demo-siden (localhost) har knapperne **Let**, **Mellem**, **Svær** og **Tilfældig**, så eleven kan skifte undervejs.
+- Hints (how-to for tilladte escapes) er **til** som standard. `--no-hints` skjuler dem; knapperne bliver.
+- `koderup-kiosk status` viser altid hvilke escapes der er tilladt (lærerens facit).
+
+#### Hvordan
+
+Fra Dash: klik **Kiosk**.
+
+Fra terminal på laptopen (som `anon` — kræver ikke admin-adgangskode):
+
+```sh
+koderup-kiosk start
+koderup-kiosk start --scenario easy
+koderup-kiosk start --scenario medium
+koderup-kiosk start --scenario hard
+koderup-kiosk start --random --no-hints
+koderup-kiosk start --url https://example.org
+koderup-kiosk status
+koderup-kiosk stop
+```
+
+Over SSH (admin/root):
+
+```sh
+ssh admin@koderup12.netbird.cloud
+sudo koderup-kiosk start
+sudo koderup-kiosk status
+sudo koderup-kiosk stop
+```
+
+`--url` springer demo-siden over (ingen knapper/hints). Ellers åbnes `http://127.0.0.1:4173/`.
+
+#### Scenarier og escapes
+
+| Scenarie | Betydning |
+| --- | --- |
+| `easy` / Let | Kun Chromium `--kiosk`; alle listede escapes virker |
+| `medium` / Mellem | Super, Alt+Tab, Alt+F2 og tilgængelighed blokeret |
+| `hard` / Svær | Alle listede escapes blokeret; browseren genstartes hvis den lukkes |
+| `random` / Tilfældig | Standard. Tilfældigt antal tilladte escapes |
+
+Enkelte escapes kan overstyres: `--allow-tty`, `--no-allow-close`, osv.
+
+| Escape | Hvad det er |
+| --- | --- |
+| `overview` | Super / Aktiviteter |
+| `alt-tab` | Vinduesskifter |
+| `close` | Alt+F4 / Ctrl+W (ellers genstartes browseren) |
+| `new-window` | Ctrl+N / Ctrl+T |
+| `devtools` | F12 / Ctrl+Shift+I |
+| `context-menu` | Højreklik |
+| `file-dialogs` | Ctrl+O / Ctrl+S / Ctrl+P |
+| `tty` | Ctrl+Alt+F1–F6 |
+| `run-command` | Alt+F2 |
+| `reboot` | Almindelig genstart/sluk (fysisk tænd/sluk i ca. 4 sek. virker stadig) |
+| `usb-automount` | USB-nøgle åbner Filer |
+| `a11y` | Klæbetaster, skærmtastatur, forstørrelse, Orca |
+
+Implementering: [`modules/kiosk.nix`](modules/kiosk.nix), [`modules/kiosk.sh`](modules/kiosk.sh), demo i [`modules/kiosk-page/`](modules/kiosk-page/).
+
+#### Residual / fremtidige huller
+
+Ikke blokeret i denne version (mulige senere udvidelser): stemmestyring, ekstra tastatur/mus/Bluetooth, USB-C-dock og ekstern skærm, touchpad-gestus, GNOME-topbar (netværk, ur, skærmbillede), brugerskift til `admin`, låseskærm, Magic SysRq / BIOS efter reboot, `chrome://`-sider, notifikationer, batteri-/opdateringsbobler, suspend/lågdækning, Flatpak-portaler.
 
 ## Development
 

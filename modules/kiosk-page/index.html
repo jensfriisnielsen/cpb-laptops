@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kiosk</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Kiosk</h1>
+      <p class="lead">Vælg sværhedsgrad, og prøv at komme ud af kiosk-tilstand.</p>
+
+      <div class="modes" id="modes" aria-label="Sværhedsgrad">
+        <button type="button" data-mode="easy">Let</button>
+        <button type="button" data-mode="medium">Mellem</button>
+        <button type="button" data-mode="hard">Svær</button>
+        <button type="button" data-mode="random">Tilfældig</button>
+      </div>
+
+      <div id="content" class="card">
+        <p>Henter status…</p>
+      </div>
+
+      <p class="footer" id="footer"></p>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
