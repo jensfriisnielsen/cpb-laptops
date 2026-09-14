@@ -157,7 +157,7 @@ sudo koderup-kiosk stop
 
 | Scenarie | Betydning |
 | --- | --- |
-| `easy` / Let | Kun Chromium `--kiosk`; alle listede escapes virker |
+| `easy` / Let | Alle listede escapes virker. `--kiosk` bruges kun når højreklik er blokeret |
 | `medium` / Mellem | Super, Alt+Tab, Alt+F2 og tilgængelighed blokeret |
 | `hard` / Svær | Alle listede escapes blokeret; browseren genstartes hvis den lukkes |
 | `random` / Tilfældig | Standard. Tilfældigt antal tilladte escapes |
@@ -171,7 +171,7 @@ Enkelte escapes kan overstyres: `--allow-tty`, `--no-allow-close`, osv.
 | `close` | Alt+F4 / Ctrl+W (ellers genstartes browseren) |
 | `new-window` | Ctrl+N / Ctrl+T |
 | `devtools` | F12 / Ctrl+Shift+I |
-| `context-menu` | Højreklik |
+| `context-menu` | Højreklik (kræver Chromium uden `--kiosk`) |
 | `file-dialogs` | Ctrl+O / Ctrl+S / Ctrl+P |
 | `tty` | Ctrl+Alt+F1–F6 |
 | `run-command` | Alt+F2 |

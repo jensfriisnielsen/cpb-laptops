@@ -176,6 +176,19 @@ userctl() {
   systemctl --user -M "${KIOSK_USER}@" "$@"
 }
 
+wait_browser() {
+  local i
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+    if userctl is-active --quiet koderup-kiosk-browser.service; then
+      return 0
+    fi
+    sleep 0.2
+  done
+  echo "Kiosk-browseren startede ikke." >&2
+  userctl status koderup-kiosk-browser.service --no-pager >&2 || true
+  exit 1
+}
+
 run_as_anon() {
   local runtime
   runtime="$(anon_runtime)"
@@ -514,7 +527,9 @@ cmd_start() {
   ensure_state_dir
 
   # Ved fuld start: stop gamle enheder først.
-  # Ved --from-api: behold Chromium-vinduet; skift kun lockdown (ellers ser det ud som et crash).
+  # Ved --from-api: behold Chromium-vinduet medmindre højreklik (og dermed --kiosk) skifter.
+  local prev_ctx
+  prev_ctx="$(read_flag context-menu)"
   if [[ "$FROM_API" != "1" ]]; then
     cmd_stop_units
     if [[ -f "$STATE/dconf-backup/keys.list" ]]; then
@@ -596,29 +611,30 @@ cmd_start() {
     printf 'always\n' >"$STATE/browser-restart"
   fi
 
-  # Extension hvis context-menu blokeret
+  # Extension hvis context-menu blokeret (--kiosk + content script).
+  local prev_ctx_on=0
+  local now_ctx_on=0
+  case "$prev_ctx" in
+    1 | true | allow | yes) prev_ctx_on=1 ;;
+  esac
   if flag_allowed context-menu; then
+    now_ctx_on=1
     printf '0\n' >"$STATE/load-extension"
   else
     printf '1\n' >"$STATE/load-extension"
   fi
 
   if [[ "$FROM_API" == "1" ]] && userctl is-active --quiet koderup-kiosk-browser.service; then
-    echo "Kiosk opdateret (scenarie: $scenario)."
+    if [[ "$prev_ctx_on" -ne "$now_ctx_on" ]]; then
+      userctl restart koderup-kiosk-browser.service
+      wait_browser
+      echo "Kiosk opdateret (scenarie: $scenario, browser genstartet: højreklik)."
+    else
+      echo "Kiosk opdateret (scenarie: $scenario)."
+    fi
   else
     userctl start koderup-kiosk-browser.service
-    local i
-    for i in 1 2 3 4 5 6 7 8 9 10; do
-      if userctl is-active --quiet koderup-kiosk-browser.service; then
-        break
-      fi
-      sleep 0.2
-    done
-    if ! userctl is-active --quiet koderup-kiosk-browser.service; then
-      echo "Kiosk-browseren startede ikke." >&2
-      userctl status koderup-kiosk-browser.service --no-pager >&2 || true
-      exit 1
-    fi
+    wait_browser
     echo "Kiosk startet (scenarie: $scenario)."
   fi
   if [[ "$scenario" == "random" ]]; then

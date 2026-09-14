@@ -35,9 +35,10 @@ if [[ -z "$xauthority" ]]; then
   done
 fi
 
-args=(
+# Shared argv. --kiosk vs --app is chosen in run_once from flag-context-menu:
+# Chromium --kiosk permanently hides the native context menu (crbug 475506).
+base_args=(
   --user-data-dir="$profile"
-  --kiosk
   --no-first-run
   --disable-infobars
   --noerrdialogs
@@ -47,10 +48,11 @@ args=(
   --check-for-update-interval=31536000
 )
 
-# Classroom Chromium policy force-installs uBlock/Privacy Badger/Consent-O-Matic.
-# Those open first-run pages that steal the kiosk window. Never load them here.
-# Always load only the kiosk extension so mode changes do not need a Chromium restart.
-args+=(--disable-extensions-except="$EXTENSION_DIR" --load-extension="$EXTENSION_DIR")
+flag_allowed() {
+  local v
+  v="$(cat "$STATE/flag-$1" 2>/dev/null || echo 1)"
+  [[ "$v" == "1" || "$v" == "true" || "$v" == "allow" || "$v" == "yes" ]]
+}
 
 chrom_pid=""
 
@@ -69,6 +71,20 @@ run_once() {
   local url
   url="$(cat "$STATE/url")"
 
+  local -a args=("${base_args[@]}")
+  # Classroom Chromium policy force-installs uBlock/Privacy Badger/Consent-O-Matic.
+  # Those open first-run pages that steal the kiosk window. Never load them here.
+  if flag_allowed context-menu; then
+    args+=(--start-fullscreen --start-maximized --disable-extensions --app="$url")
+  else
+    args+=(
+      --kiosk
+      --disable-extensions-except="$EXTENSION_DIR"
+      --load-extension="$EXTENSION_DIR"
+      "$url"
+    )
+  fi
+
   local -a env_args=(
     HOME="/home/$KIOSK_USER"
     USER="$KIOSK_USER"
@@ -84,9 +100,9 @@ run_once() {
   fi
 
   if [[ "$(id -u)" -eq 0 ]]; then
-    env "${env_args[@]}" runuser -u "$KIOSK_USER" -- "$CHROMIUM" "${args[@]}" "$url" &
+    env "${env_args[@]}" runuser -u "$KIOSK_USER" -- "$CHROMIUM" "${args[@]}" &
   else
-    env "${env_args[@]}" "$CHROMIUM" "${args[@]}" "$url" &
+    env "${env_args[@]}" "$CHROMIUM" "${args[@]}" &
   fi
   chrom_pid=$!
   wait "$chrom_pid" || true

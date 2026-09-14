@@ -102,7 +102,6 @@ function render(status) {
 
   for (const id of ids) {
     const allowed = !!flags[id];
-    if (isRandom && !allowed) continue;
 
     const meta = ESCAPES[id];
     html += `<div class="escape">`;
