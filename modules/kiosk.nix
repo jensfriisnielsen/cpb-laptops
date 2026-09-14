@@ -145,8 +145,10 @@ in
       Type = "simple";
       ExecStart = "${kioskBrowser}/bin/koderup-kiosk-browser";
       Restart = "no";
-      KillMode = "control-group";
-      TimeoutStopSec = 5;
+      # SIGTERM the wrapper and Chromium together so stop is not a SIGKILL crash.
+      KillMode = "mixed";
+      KillSignal = "SIGTERM";
+      TimeoutStopSec = 8;
     };
   };
 

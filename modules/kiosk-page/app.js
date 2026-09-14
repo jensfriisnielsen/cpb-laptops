@@ -150,19 +150,31 @@ function render(status) {
 
 async function setMode(mode) {
   const content = document.getElementById("content");
-  content.innerHTML = "<p>Skifter til " + mode + "…</p>";
-  const res = await fetch("/api/mode", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ scenario: mode }),
+  const buttons = document.querySelectorAll(".modes button");
+  buttons.forEach((btn) => {
+    btn.disabled = true;
   });
-  if (!res.ok) {
-    const text = await res.text();
-    content.innerHTML = `<p class="error">Fejl: ${text || res.status}</p>`;
-    return;
+  content.innerHTML = "<p>Skifter til " + mode + "…</p>";
+  try {
+    const res = await fetch("/api/mode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scenario: mode }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      content.innerHTML = `<p class="error">Fejl: ${text || res.status}</p>`;
+      return;
+    }
+    const status = await fetchStatus();
+    render(status);
+  } catch (err) {
+    content.innerHTML = `<p class="error">${err.message}</p>`;
+  } finally {
+    buttons.forEach((btn) => {
+      btn.disabled = false;
+    });
   }
-  // Server restarts lockdown; reload to pick up new status / hints query.
-  location.reload();
 }
 
 document.querySelectorAll(".modes button").forEach((btn) => {

@@ -10,7 +10,6 @@ CHROMIUM="${KODERUP_KIOSK_CHROMIUM:?}"
 uid="$(id -u "$KIOSK_USER")"
 gid="$(id -g "$KIOSK_USER")"
 runtime="${XDG_RUNTIME_DIR:-/run/user/$uid}"
-url="$(cat "$STATE/url")"
 profile="$STATE/profile"
 mkdir -p "$profile"
 if [[ "$(id -u)" -eq 0 ]]; then
@@ -50,17 +49,26 @@ args=(
 
 # Classroom Chromium policy force-installs uBlock/Privacy Badger/Consent-O-Matic.
 # Those open first-run pages that steal the kiosk window. Never load them here.
-if [[ -f "$STATE/load-extension" && "$(cat "$STATE/load-extension")" == "1" ]]; then
-  args+=(--disable-extensions-except="$EXTENSION_DIR" --load-extension="$EXTENSION_DIR")
-else
-  args+=(--disable-extensions)
-fi
+# Always load only the kiosk extension so mode changes do not need a Chromium restart.
+args+=(--disable-extensions-except="$EXTENSION_DIR" --load-extension="$EXTENSION_DIR")
 
-args+=("$url")
+chrom_pid=""
 
-restart="$(cat "$STATE/browser-restart" 2>/dev/null || echo no)"
+on_stop() {
+  trap - TERM INT
+  if [[ -n "$chrom_pid" ]]; then
+    kill -TERM "$chrom_pid" 2>/dev/null || true
+    wait "$chrom_pid" 2>/dev/null || true
+    chrom_pid=""
+  fi
+  exit 0
+}
+trap on_stop TERM INT
 
 run_once() {
+  local url
+  url="$(cat "$STATE/url")"
+
   local -a env_args=(
     HOME="/home/$KIOSK_USER"
     USER="$KIOSK_USER"
@@ -76,17 +84,22 @@ run_once() {
   fi
 
   if [[ "$(id -u)" -eq 0 ]]; then
-    env "${env_args[@]}" runuser -u "$KIOSK_USER" -- "$CHROMIUM" "${args[@]}"
+    env "${env_args[@]}" runuser -u "$KIOSK_USER" -- "$CHROMIUM" "${args[@]}" "$url" &
   else
-    env "${env_args[@]}" "$CHROMIUM" "${args[@]}"
+    env "${env_args[@]}" "$CHROMIUM" "${args[@]}" "$url" &
   fi
+  chrom_pid=$!
+  wait "$chrom_pid" || true
+  chrom_pid=""
 }
 
-if [[ "$restart" == "always" ]]; then
-  while true; do
-    run_once || true
-    sleep 0.4
-  done
-else
+# Re-read browser-restart after each exit so Let/Svær can change close-policy
+# without killing a live window. SIGTERM must not spawn another Chromium.
+while true; do
   run_once
-fi
+  restart="$(cat "$STATE/browser-restart" 2>/dev/null || echo no)"
+  if [[ "$restart" != "always" ]]; then
+    exit 0
+  fi
+  sleep 0.4
+done

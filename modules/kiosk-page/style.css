@@ -62,6 +62,11 @@ h1 {
   border-color: var(--accent);
 }
 
+.modes button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .modes button.active {
   background: var(--btn-active);
   border-color: var(--accent);
