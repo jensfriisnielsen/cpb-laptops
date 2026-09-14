@@ -79,6 +79,8 @@ need_root() {
 ensure_state_dir() {
   mkdir -p "$STATE" "$STATE/dconf-backup" "$STATE/keyd" "$STATE/profile"
   chmod 755 "$STATE"
+  # Browser-unit kører som anon og skal kunne skrive SingletonLock m.m.
+  chown "$KIOSK_USER:users" "$STATE/profile"
 }
 
 write_flag() {
@@ -637,6 +639,7 @@ cmd_stop() {
     "$STATE/page-mode" "$STATE/browser-restart" "$STATE/load-extension" 2>/dev/null || true
   rm -rf "$STATE/keyd" "$STATE/profile" 2>/dev/null || true
   mkdir -p "$STATE/keyd" "$STATE/profile"
+  chown "$KIOSK_USER:users" "$STATE/profile"
   echo "Kiosk stoppet."
 }
 

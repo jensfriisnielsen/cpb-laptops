@@ -48,8 +48,12 @@ args=(
   --check-for-update-interval=31536000
 )
 
+# Classroom Chromium policy force-installs uBlock/Privacy Badger/Consent-O-Matic.
+# Those open first-run pages that steal the kiosk window. Never load them here.
 if [[ -f "$STATE/load-extension" && "$(cat "$STATE/load-extension")" == "1" ]]; then
   args+=(--disable-extensions-except="$EXTENSION_DIR" --load-extension="$EXTENSION_DIR")
+else
+  args+=(--disable-extensions)
 fi
 
 args+=("$url")
