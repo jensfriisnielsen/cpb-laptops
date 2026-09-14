@@ -18,7 +18,7 @@ let
       export KODERUP_KIOSK_STATE="''${KODERUP_KIOSK_STATE:-/run/koderup-kiosk}"
       export KODERUP_KIOSK_HOST=127.0.0.1
       export KODERUP_KIOSK_PORT="''${KODERUP_KIOSK_PORT:-4173}"
-      export KODERUP_KIOSK_BIN=koderup-kiosk
+      export KODERUP_KIOSK_BIN="${koderupKiosk}/bin/koderup-kiosk"
       exec python3 ${./kiosk-page/server.py}
     '';
   };
@@ -48,14 +48,13 @@ let
       dbus
       systemd
       util-linux
-      sudo
       python3
     ];
     text = ''
       export KODERUP_KIOSK_STATE="''${KODERUP_KIOSK_STATE:-/run/koderup-kiosk}"
       export KODERUP_KIOSK_PORT="''${KODERUP_KIOSK_PORT:-4173}"
       export KODERUP_KIOSK_USER=anon
-      export KODERUP_KIOSK_BIN="$0"
+      export KODERUP_KIOSK_BIN="${placeholder "out"}/bin/koderup-kiosk"
       exec bash ${./kiosk.sh} "$@"
     '';
   };
@@ -89,6 +88,10 @@ in
       commands = [
         {
           command = "${koderupKiosk}/bin/koderup-kiosk";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/run/current-system/sw/bin/koderup-kiosk";
           options = [ "NOPASSWD" ];
         }
       ];
@@ -128,12 +131,10 @@ in
     };
   };
 
-  systemd.services.koderup-kiosk-browser = {
+  # User unit så Chromium arver GNOME/Wayland-sessionen (ikke et root-system unit).
+  systemd.user.services.koderup-kiosk-browser = {
     description = "Koderup kiosk Chromium";
-    after = [
-      "display-manager.service"
-      "koderup-kiosk-page.service"
-    ];
+    after = [ "graphical-session.target" ];
     path = [
       pkgs.chromium
       pkgs.util-linux
@@ -144,7 +145,6 @@ in
       Type = "simple";
       ExecStart = "${kioskBrowser}/bin/koderup-kiosk-browser";
       Restart = "no";
-      # Browser-scriptet laver selv genstart-loop når close er blokeret.
       KillMode = "control-group";
       TimeoutStopSec = 5;
     };

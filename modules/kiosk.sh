@@ -66,7 +66,14 @@ need_root() {
   if [[ "$(id -u)" -eq 0 ]]; then
     return 0
   fi
-  exec sudo -n "$SELF" "$@"
+  local bin="$SELF"
+  if [[ "$bin" != /* ]]; then
+    bin="$(command -v "$bin" 2>/dev/null || true)"
+  fi
+  if [[ -n "$bin" ]]; then
+    bin="$(readlink -f "$bin")"
+  fi
+  exec /run/wrappers/bin/sudo -n "${bin:-$SELF}" "$@"
 }
 
 ensure_state_dir() {
@@ -161,6 +168,10 @@ anon_env_ok() {
   local runtime
   runtime="$(anon_runtime)"
   [[ -S "$runtime/bus" ]]
+}
+
+userctl() {
+  systemctl --user -M "${KIOSK_USER}@" "$@"
 }
 
 run_as_anon() {
@@ -419,6 +430,7 @@ keyd_needed() {
 }
 
 cmd_stop_units() {
+  userctl stop koderup-kiosk-browser.service 2>/dev/null || true
   systemctl stop koderup-kiosk-browser.service 2>/dev/null || true
   systemctl stop koderup-kiosk-inhibit.service 2>/dev/null || true
   systemctl stop koderup-kiosk-keyd.service 2>/dev/null || true
@@ -505,6 +517,7 @@ cmd_start() {
       restore_dconf || true
     fi
   else
+    userctl stop koderup-kiosk-browser.service 2>/dev/null || true
     systemctl stop koderup-kiosk-browser.service 2>/dev/null || true
     systemctl stop koderup-kiosk-inhibit.service 2>/dev/null || true
     systemctl stop koderup-kiosk-keyd.service 2>/dev/null || true
@@ -588,7 +601,19 @@ cmd_start() {
     printf '1\n' >"$STATE/load-extension"
   fi
 
-  systemctl start koderup-kiosk-browser.service
+  userctl start koderup-kiosk-browser.service
+  local i
+  for i in 1 2 3 4 5 6 7 8 9 10; do
+    if userctl is-active --quiet koderup-kiosk-browser.service; then
+      break
+    fi
+    sleep 0.2
+  done
+  if ! userctl is-active --quiet koderup-kiosk-browser.service; then
+    echo "Kiosk-browseren startede ikke." >&2
+    userctl status koderup-kiosk-browser.service --no-pager >&2 || true
+    exit 1
+  fi
 
   echo "Kiosk startet (scenarie: $scenario)."
   if [[ "$scenario" == "random" ]]; then
@@ -616,7 +641,7 @@ cmd_stop() {
 }
 
 cmd_status() {
-  if systemctl is-active --quiet koderup-kiosk-browser.service 2>/dev/null; then
+  if userctl is-active --quiet koderup-kiosk-browser.service 2>/dev/null; then
     echo "Status: kører"
   else
     echo "Status: stoppet"
