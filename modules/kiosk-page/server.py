@@ -40,6 +40,41 @@ def read_text(name: str, default: str = "") -> str:
         return default
 
 
+def write_text(name: str, value: str) -> None:
+    (STATE / name).write_text(f"{value}\n", encoding="utf-8")
+
+
+def write_hints(enabled: bool) -> None:
+    write_text("hints", "1" if enabled else "0")
+    if read_text("page-mode", "demo") == "demo":
+        write_text("url", f"http://{HOST}:{PORT}/?hints={'1' if enabled else '0'}")
+
+
+def parse_json_body(handler: SimpleHTTPRequestHandler) -> dict | None:
+    length = int(handler.headers.get("Content-Length", "0"))
+    raw = handler.rfile.read(length) if length else b"{}"
+    try:
+        data = json.loads(raw.decode("utf-8") or "{}")
+    except json.JSONDecodeError:
+        handler.send_error(400, "Ugyldig JSON")
+        return None
+    if not isinstance(data, dict):
+        handler.send_error(400, "Ugyldig JSON")
+        return None
+    return data
+
+
+def send_json(handler: SimpleHTTPRequestHandler, payload: dict, status: int = 200) -> None:
+    body = json.dumps(payload).encode("utf-8")
+    handler.send_response(status)
+    handler.send_header("Content-Type", "application/json; charset=utf-8")
+    handler.send_header("Content-Length", str(len(body)))
+    handler.send_header("Cache-Control", "no-store")
+    handler.send_header("Access-Control-Allow-Origin", "*")
+    handler.end_headers()
+    handler.wfile.write(body)
+
+
 def read_status() -> dict:
     scenario = read_text("scenario", "random")
     hints_raw = read_text("hints", "1")
@@ -66,28 +101,28 @@ class Handler(SimpleHTTPRequestHandler):
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         if parsed.path == "/api/status":
-            body = json.dumps(read_status()).encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(body)))
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-            self.wfile.write(body)
+            send_json(self, read_status())
             return
         super().do_GET()
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path == "/api/hints":
+            data = parse_json_body(self)
+            if data is None:
+                return
+            try:
+                write_hints(bool(data.get("hints")))
+            except OSError as exc:
+                send_json(self, {"ok": False, "error": str(exc)}, 500)
+                return
+            send_json(self, {"ok": True, **read_status()})
+            return
         if parsed.path != "/api/mode":
             self.send_error(404)
             return
-        length = int(self.headers.get("Content-Length", "0"))
-        raw = self.rfile.read(length) if length else b"{}"
-        try:
-            data = json.loads(raw.decode("utf-8") or "{}")
-        except json.JSONDecodeError:
-            self.send_error(400, "Ugyldig JSON")
+        data = parse_json_body(self)
+        if data is None:
             return
         scenario = str(data.get("scenario", "")).strip()
         if scenario not in ("easy", "medium", "hard", "random"):

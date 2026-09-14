@@ -61,11 +61,22 @@ const ESCAPES = {
   },
 };
 
-function qsHints() {
-  const v = new URLSearchParams(location.search).get("hints");
-  if (v === "0") return false;
-  if (v === "1") return true;
-  return null;
+const ASCII_BG = [
+  "",
+  "                   |",
+  "                  /|\\",
+  "                 /_|_\\",
+  "                ___|___",
+  "                \\  |  /",
+  "          _______|--+|--_______",
+  "         /                     /",
+  "        /_____________________/",
+  "    ~~~~^~~~~^~~~~^~~~~^~~~~^~~~~",
+  "",
+].join("\n");
+
+function hintsOn(status) {
+  return status.hints !== false && status.hints !== 0;
 }
 
 async function fetchStatus() {
@@ -75,23 +86,36 @@ async function fetchStatus() {
 }
 
 function setActiveMode(scenario) {
-  document.querySelectorAll(".modes button").forEach((btn) => {
+  document.querySelectorAll(".modes button[data-mode]").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.mode === scenario);
   });
 }
 
+function setHintsActive(on) {
+  const btn = document.getElementById("hints-btn");
+  if (!btn) return;
+  btn.classList.toggle("active", on);
+  btn.setAttribute("aria-pressed", on ? "true" : "false");
+}
+
+function setToolbarDisabled(disabled) {
+  document.querySelectorAll(".modes button").forEach((btn) => {
+    btn.disabled = disabled;
+  });
+}
+
 function render(status) {
-  const hints =
-    qsHints() !== null ? qsHints() : status.hints !== false && status.hints !== 0;
+  const hints = hintsOn(status);
   const flags = status.flags || {};
   const content = document.getElementById("content");
   const footer = document.getElementById("footer");
 
   setActiveMode(status.scenario || "random");
+  setHintsActive(hints);
 
   if (!hints) {
     content.innerHTML =
-      '<p class="challenge">Find en vej ud</p><p class="lead" style="text-align:center;margin:0">Ingen hints. Brug knapperne ovenfor for at skifte sværhedsgrad.</p>';
+      '<div class="ascii-bg" aria-hidden="true"><pre>' + ASCII_BG + "</pre></div>";
     footer.textContent = "";
     return;
   }
@@ -149,10 +173,7 @@ function render(status) {
 
 async function setMode(mode) {
   const content = document.getElementById("content");
-  const buttons = document.querySelectorAll(".modes button");
-  buttons.forEach((btn) => {
-    btn.disabled = true;
-  });
+  setToolbarDisabled(true);
   content.innerHTML = "<p>Skifter til " + mode + "…</p>";
   try {
     const res = await fetch("/api/mode", {
@@ -170,14 +191,43 @@ async function setMode(mode) {
   } catch (err) {
     content.innerHTML = `<p class="error">${err.message}</p>`;
   } finally {
-    buttons.forEach((btn) => {
-      btn.disabled = false;
-    });
+    setToolbarDisabled(false);
   }
 }
 
-document.querySelectorAll(".modes button").forEach((btn) => {
+async function setHints(on) {
+  const content = document.getElementById("content");
+  setToolbarDisabled(true);
+  try {
+    const res = await fetch("/api/hints", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hints: on }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      content.innerHTML = `<p class="error">Fejl: ${text || res.status}</p>`;
+      return;
+    }
+    const status = await res.json();
+    const url = new URL(location.href);
+    url.searchParams.set("hints", on ? "1" : "0");
+    history.replaceState(null, "", url);
+    render(status);
+  } catch (err) {
+    content.innerHTML = `<p class="error">${err.message}</p>`;
+  } finally {
+    setToolbarDisabled(false);
+  }
+}
+
+document.querySelectorAll(".modes button[data-mode]").forEach((btn) => {
   btn.addEventListener("click", () => setMode(btn.dataset.mode));
+});
+
+document.getElementById("hints-btn").addEventListener("click", () => {
+  const on = document.getElementById("hints-btn").getAttribute("aria-pressed") !== "true";
+  setHints(on);
 });
 
 fetchStatus()
