@@ -121,18 +121,19 @@ in
     #firefox # see ./firefox.nix
     gimp
     git
+    godot
     #inkscape # see ./inkscape.nix
     krita # paint https://krita.org/en/
     libreoffice
     librewolf # unmanaged browser
     magic-wormhole # wormhole send anywhere
+    nmap # also ncat
     python3
     termshark # like wireshark just in the terminal
     tmux
     tree
     unp # unpack any archive
     vim
-    godot
     vscodium
   ];
 
