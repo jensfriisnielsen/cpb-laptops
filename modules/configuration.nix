@@ -132,6 +132,8 @@ in
     tree
     unp # unpack any archive
     vim
+    godot
+    vscodium
   ];
 
   users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;
