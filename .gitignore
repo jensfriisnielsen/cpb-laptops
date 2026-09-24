@@ -1,5 +1,7 @@
 # secrets
 git-crypt-key
+sops-certs
 # the rest of the secrets should be encrypted, see .gitattributes and sops.nix
 
 __pycache__
+.cursor/

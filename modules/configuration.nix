@@ -29,6 +29,7 @@ in
     ./speakers.nix
     ./autoupgrade.nix
     ./kiosk.nix
+    ./koderup-ca.nix
   ];
 
   services.flatpak.enable = true;

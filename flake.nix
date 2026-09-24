@@ -107,6 +107,8 @@
         packages = with pkgs; [
           git-crypt
           just
+          mkcert
+          sops
           ssh-to-age
           openssl
           share-eth
