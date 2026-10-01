@@ -67,10 +67,23 @@
         text = builtins.readFile ./scripts/eval-hosts.sh;
       };
 
+      battleship = pkgs.python3Packages.buildPythonApplication {
+        pname = "battleship";
+        version = "0.1.0";
+        src = ./contrib/battleship;
+        format = "setuptools";
+        propagatedBuildInputs = with pkgs.python3Packages; [
+          textual
+          pyyaml
+        ];
+        meta.mainProgram = "battleship";
+      };
+
       # Shared managed-laptop config; hostname, facter, and optional hosts/<name> modules differ.
       mkLaptop =
         hostname:
         lib.nixosSystem {
+          specialArgs = { inherit battleship; };
           modules = [
             disko.nixosModules.disko
             sops-nix.nixosModules.sops
@@ -89,7 +102,7 @@
       nixosConfigurations = lib.genAttrs hostnames mkLaptop;
 
       packages.${system} = {
-        inherit share-eth eval-hosts;
+        inherit share-eth eval-hosts battleship;
       };
 
       apps.${system} = {
@@ -100,6 +113,10 @@
         eval-hosts = {
           type = "app";
           program = "${eval-hosts}/bin/eval-hosts";
+        };
+        battleship = {
+          type = "app";
+          program = "${battleship}/bin/battleship";
         };
       };
 
@@ -115,6 +132,7 @@
           eval-hosts
           mdbook # build the laptop manual (docs/manual)
           python3 # preview the manual / kiosk-demo pages
+          battleship
         ];
       };
     };
