@@ -6,14 +6,15 @@
 # Notes from inspecting the homepage-dashboard package at the locked nixpkgs rev:
 # - The wrapper bin/homepage runs node share/homepage/server.js (Next.js
 #   standalone). That server reads PORT and HOSTNAME; HOSTNAME is its *bind
-#   address*, but systemd also exports $HOSTNAME for units — which would make
-#   the service try to bind the machine hostname. Pin it to the loopback.
+#   address*. The nixpkgs package ships the upstream install-script placeholder
+#   '[IP_ADDRESS]' unreplaced (upstream sed-replaces it with the machine IP),
+#   which is not a valid hostname — bind fails with ENOTFOUND. Override it to
+#   pin the server to the loopback.
 # - Config dir is $HOMEPAGE_CONFIG_DIR (default: <cwd>/config, read-only store
 #   path). gethomepage writes a .cache there, so copy the generated config to a
 #   writable dir before start.
-# - Host validation defaults already allow "localhost:3000" and
-#   "[IP_ADDRESS]:3000", so do NOT set HOMEPAGE_ALLOWED_HOSTS (it would only
-#   add non-matching entries).
+# - Host validation defaults already allow "localhost:3000", so do NOT set
+#   HOMEPAGE_ALLOWED_HOSTS (it would only add non-matching entries).
 { pkgs, ... }:
 
 let
@@ -47,7 +48,7 @@ in
     ];
     environment = {
       PORT = "3000";
-      HOSTNAME = "[IP_ADDRESS]"; # bind address for the Next standalone server
+      HOSTNAME = "127.0.0.1"; # bind address for the Next standalone server
       HOMEPAGE_CONFIG_DIR = "/var/lib/koderup-homepage";
       NIXPKGS_HOMEPAGE_CACHE_DIR = "/var/cache/koderup-homepage";
     };

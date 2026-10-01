@@ -38,6 +38,10 @@
     url = "http://localhost:8888";
   }
   {
+    name = "Homepage";
+    url = "http://localhost:3000";
+  }
+  {
     name = "koderup.dk";
     url = "https://koderup.dk";
   }
