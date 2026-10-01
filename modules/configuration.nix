@@ -26,11 +26,13 @@ in
     ./microbit.nix
     ./inkscape.nix
     ./bambu-studio.nix
+    ./colyseus.nix
     ./speakers.nix
     ./autoupgrade.nix
     ./kiosk.nix
     ./koderup-ca.nix
   ];
+
 
   services.flatpak.enable = true;
 
