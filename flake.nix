@@ -113,6 +113,8 @@
           openssl
           share-eth
           eval-hosts
+          mdbook # build the laptop manual (docs/manual)
+          python3 # preview the manual / kiosk-demo pages
         ];
       };
     };

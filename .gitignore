@@ -5,3 +5,5 @@ sops-certs
 
 __pycache__
 .cursor/
+# mdBook build output for the laptop manual (docs/manual); never commit it
+/docs/manual/book/

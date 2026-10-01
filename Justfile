@@ -15,3 +15,10 @@ test:
 
 test-full:
     ./scripts/eval-hosts.sh --all
+
+# Build + preview the laptop manual locally (mirrors the deployed
+# http://localhost:8888 on the managed laptops).
+manual:
+    mdbook build ./docs/manual
+    cp docs/*.png docs/manual/book/ || true
+    python3 -m http.server 8888 --bind 127.0.0.1 --directory docs/manual/book

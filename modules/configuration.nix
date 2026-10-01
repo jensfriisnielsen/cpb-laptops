@@ -31,6 +31,8 @@ in
     ./autoupgrade.nix
     ./kiosk.nix
     ./koderup-ca.nix
+    ./manual.nix
+    ./homepage.nix
   ];
 
 

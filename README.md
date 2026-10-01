@@ -311,7 +311,7 @@ Inkscape with extensions:
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-They also get a locked **Pirater** bookmark folder (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops), defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
+They also get locked bookmark folders — **Pirater** (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops) and **Koderup** (Laptop-manual, koderup.dk) — defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
@@ -329,6 +329,18 @@ After a rebuild, check with `getent hosts facebook.com` or `doggo facebook.com` 
 ![facebook-blocked](docs/facebook-dns-blocked.png)
 
 Inspect after a rebuild (restart the browser): `about:policies` (Firefox), `brave://policy`, `chrome://policy`.
+
+### Manual og hjemmeside
+
+A Danish user manual for the laptop users lives in [`docs/manual/`](docs/manual/) (mdBook sources under `src/`). [`modules/manual.nix`](modules/manual.nix) builds it with mdBook during the NixOS config build and serves the rendered site on **every laptop** at `http://localhost:8888` (localhost only). The rendered HTML ships as part of the system closure — the markdown never reaches a laptop. Manual edits reach the fleet once committed and pushed (nightly `system.autoUpgrade` or `just rebuild HOST`), and docs changes trigger the CI koderup1 build.
+
+Preview locally from the devshell:
+
+```sh
+just manual
+```
+
+The fleet dashboard [gethomepage.dev](https://gethomepage.dev) runs on each laptop at `http://localhost:3000` (also localhost only) from the nixpkgs `homepage-dashboard` package via `koderup-homepage.service` ([`modules/homepage.nix`](modules/homepage.nix)). It shows two bookmarks — **Laptop-manual** (`localhost:8888`) and **koderup.dk** (`https://koderup.dk`) — mirrored as locked browser bookmarks in the **Koderup** folder.
 
 ### LEGO SPIKE
 
