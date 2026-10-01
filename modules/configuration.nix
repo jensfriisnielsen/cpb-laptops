@@ -2,12 +2,17 @@
   modulesPath,
   lib,
   pkgs,
+  battleship,
   ...
 } @ args:
 let
   sshAuthorizedKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOJy1bCfyM+qtQ3RdR9DjeYffMuwcburCVJ/LKeNI0z jef2022passphrase"
   ];
+
+  slagskibe = pkgs.writeShellScriptBin "slagskibe" ''
+    exec ${battleship}/bin/battleship "$@"
+  '';
 in
 {
   imports = [
@@ -140,6 +145,9 @@ in
     unp # unpack any archive
     vim
     vscodium
+  ] ++ [
+    battleship
+    slagskibe
   ];
 
   users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;
