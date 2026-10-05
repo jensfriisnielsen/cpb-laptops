@@ -1,71 +1,71 @@
 # 🚢 Sænke Slagskibe – TUI-netværksspil
 
-Et simpelt undervisningsprojekt hvor elever placerer skibe via en konfigurationsfil og derefter skyder på hinanden over netværket ved hjælp af **ncat** og **named pipes** (fifos).
+Et simpelt undervisningsprojekt hvor elever placerer skibe via en konfigurationsfil (eller tilfældigt layout) og derefter skyder på hinanden over netværket ved hjælp af **indbygget TCP**.
 
 ## Koncept
 
-- Hver elev har en **server** (`ncat -l`) og en **client** (`ncat <ip>`), der kommunikerer rå tekst (`FIRE B2`, `HIT B2`, `SUNK B2 Destroyer`, `WIN`).
-- Spillet har en **TUI** (terminal-UI), der viser:
-  - Dit eget bræt med dine skibe og modstanderens hits.
-  - Modstanderens bræt, så du kan se dine egne hits/misses.
-  - Et log-panel med netværksbeskeder.
-- Spillet kommunikerer via to **fifos** (`--incoming` og `--outgoing`).
-  - Det gør det muligt at se rå netværkstrafik **udenfor** spillet med `ncat` og `tee`.
+- Spillet har en **indbygget TCP-server** (lyt på en port) eller fungere som **klient**.
+- Intet behov for fifos eller eksterne ncat-kommandoer – alt er indbygget.
+- **TUI** med to rækker:
+  1. `[Modstanderens bræt | Dit bræt]`
+  2. `[Felt til at skyde | Seneste svar du gav modstanderen]`
+- Klienten (den der forbinder) starter med at skyde.
+- Boksen **Seneste svar** viser det seneste svar *du* gav til modstanderens skud
+  (`HIT`/`MISS`/`SUNK`/`INVALID`), altså under dit eget bræt.
+- Rå netværkstrafik kan ses med `--debug` i TUI'en eller logges til en fil med `--log`.
 
 ## Installation
 
 ```bash
 # Kør direkte fra repoet
-nix run .#battleship -- --help
+nix run .#slagskibe -- --help
 ```
 
-## Forberedelse – fifos
+## Hurtig start
+
+### Server (vent på modstander)
 
 ```bash
-# Opret to named pipes
-mkfifo in out
+nix run .#slagskibe
 ```
 
-## Sådan starter du netværksforbindelsen
+Spillet viser en besked som `Venter på modstander: ncat [IP_ADDRESS] 4000`.
+Giv denne besked til din modstander.
 
-Den rigtige styrke er at netværksforbindelsen selv styres af eleverne **udenfor** spillet.
+### Klient (forbind til server)
 
-### Elev 1 (192.168.1.10)
-
-Terminal 1 – modtag og vis rå trafik:
 ```bash
-ncat -l 4000 | tee in
+nix run .#slagskibe -- [IP_ADDRESS]:4000
 ```
 
-Terminal 2 – send rå trafik:
+### Tilfældigt layout
+
+Udelad `--config` for at få et tilfældigt gyldigt skibslayout:
+
 ```bash
-ncat 192.168.1.11 4000 < out
+nix run .#slagskibe
 ```
 
-Terminal 3 – spillet:
+### Brugerdefineret layout
+
 ```bash
-nix run .#battleship -- --config ships.yaml --incoming in --outgoing out
+nix run .#slagskibe -- --config ships.yaml
 ```
 
-### Elev 2 (192.168.1.11)
+### Debug-tilstand (i TUI'en)
 
-Terminal 1:
 ```bash
-ncat -l 4000 | tee in
+nix run .#slagskibe -- --debug
+# tryk 'l' for at vise/skjule logpanelet
 ```
 
-Terminal 2:
+### Lyt med udefra (traffiklog)
+
 ```bash
-ncat 192.168.1.10 4000 < out
+nix run .#slagskibe -- --log /tmp/slagskibe.log
+# i en anden terminal:
+tail -f /tmp/slagskibe.log
 ```
-
-Terminal 3:
-```bash
-nix run .#battleship -- --config ships.yaml --incoming in --outgoing out
-```
-
-> 💡 **Tip:** Brug `--manual` hvis spillet ikke automatisk skal skrive til `out`.  
-> Så viser spillet `FIRE B2` i TUI'en, og eleven kopierer selv kommandoen over i `ncat`.
 
 ## Konfigurationsfil (ships.yaml)
 
@@ -90,6 +90,18 @@ ships:
     direction: horizontal
 ```
 
+## TUI taster
+
+Indtastningsfeltet har fokus, så almindelige bogstaver går til koordinatet.
+Kontroltaster gives derfor med `:` som prefiks (som i vim):
+
+| Kommando | Funktion          |
+|----------|-------------------|
+| `:?`     | Vis hjælp         |
+| `:l`     | Vis/skjul log     |
+| `:q`     | Afslut spil       |
+| Escape   | Luk hjælp / annuller `:` |
+
 ## Protokol
 
 Al kommunikation sker i **ren tekst** linje for linje:
@@ -101,5 +113,44 @@ Al kommunikation sker i **ren tekst** linje for linje:
 | `MISS B2` | Skuddet missede |
 | `SUNK B2 Destroyer` | Skuddet sænkede Destroyer |
 | `WIN` | Modstanderen har ingen skibe tilbage |
+| `INVALID ZZ INVALID_COLUMN` | Skuddet blev afvist; afsenderen må prøve igen |
 
-Eleverne kan øve sig ved at skrive beskederne direkte i `ncat` (f.eks. `echo "FIRE B2" | ncat ...`).
+Modtageren validerer alle `FIRE`-beskeder. Er koordinatet ugyldigt (f.eks. `ZZ`
+og `K11`), svarer modtageren `INVALID` og turen går tilbage til afsenderen.
+
+## Lytte på trafikken
+
+Forbindelsen er **direkte peer-til-peer**. Serveren accepterer kun *én*
+forbindelse, så du kan **ikke** bagefter sætte `ncat localhost 4000` ved siden af
+— porten er allerede taget af spilklienten (derfor "Connection refused").
+
+Brug i stedet en af disse:
+
+1. **`--log FIL`** på begge maskiner — skriver hver linje med tidsstempel og
+   retning (`>>` sendt, `<<` modtaget). Følg med via `tail -f FIL`.
+2. **`--debug`** i TUI'en — viser rå trafik i logpanelet (tast `l`).
+3. **`ncat` som selve klienten** — det virker fint mod en anden spillers server:
+   ```bash
+   ncat [IP_ADDRESS] 4000
+   FIRE B2
+   ```
+
+### ncat som mellemled (proxy) med log
+
+Vil du se trafikken med `ncat`, skal den stå *imellem* de to spillere. Lad
+serveren lytte på 4000 og sæt en `ncat`-proxy op på 4010 der videresender til
+4000, så klienten forbinder til 4010:
+
+```bash
+# på server-maskinen (spillet lytter på 4000):
+ncat -l 4010 -k --sh-exec 'ncat localhost 4000' | tee -a /tmp/traffic.log
+```
+
+> `ncat` er en simpel tovejs-proxy og er ikke ideel til at logge begge
+> retninger pænt. Vil du have begge retninger med, brug `--log` (anbefales) eller
+> `socat -v TCP-LISTEN:4010,reuseaddr,fork TCP:localhost:4000`.
+
+## Se også
+
+- `nix run .#slagskibe -- --help` for alle kommandolinjeindstillinger
+- `examples/ships.yaml` for eksempel på skibskonfiguration

@@ -2,7 +2,7 @@
   modulesPath,
   lib,
   pkgs,
-  battleship,
+  slagskibe,
   ...
 } @ args:
 let
@@ -11,7 +11,7 @@ let
   ];
 
   slagskibe = pkgs.writeShellScriptBin "slagskibe" ''
-    exec ${battleship}/bin/battleship "$@"
+    exec ${slagskibe}/bin/slagskibe "$@"
   '';
 in
 {
@@ -139,6 +139,7 @@ in
     magic-wormhole # wormhole send anywhere
     nmap # also ncat
     python3
+    qrencode
     termshark # like wireshark just in the terminal
     tmux
     tree
@@ -146,7 +147,6 @@ in
     vim
     vscodium
   ] ++ [
-    battleship
     slagskibe
   ];
 

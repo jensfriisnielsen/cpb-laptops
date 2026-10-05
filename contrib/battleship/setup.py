@@ -1,10 +1,11 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 setup(
-    name="battleship",
-    version="0.1.0",
-    description="Sænke Slagskibe – simpelt TUI-netværksspil for elever",
-    packages=find_packages(),
+    name="slagskibe",
+    version="0.2.0",
+    description="Sænke Slagskibe – TUI-netværksspil med indbygget TCP (tidligere battleship)",
+    packages=["slagskibe"],
+    package_dir={"slagskibe": "slagskibe"},
     python_requires=">=3.10",
     install_requires=[
         "textual>=0.70.0",
@@ -12,7 +13,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "battleship=battleship.main:run",
+            "slagskibe=slagskibe.main:run",
         ],
     },
 )

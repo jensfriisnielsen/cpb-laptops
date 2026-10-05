@@ -1,5 +1,6 @@
 """Battleship board logic."""
 
+import random
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -25,6 +26,7 @@ class Board:
     """10×10 Battleship board."""
 
     SIZE = 10
+    COL_LETTERS = "ABCDEFGHIJ"
 
     def __init__(self):
         # Track placed ships: name -> set of (x, y)
@@ -141,26 +143,70 @@ class Board:
     def get_ship_length(self, name: str) -> int:
         return SHIP_BY_NAME[name].length
 
-    def enemy_cell_char(self, col: int, row: int, own_board: bool = False) -> str:
-        """Return a single character for a cell on the target board."""
-        coord = (col, row)
-        if coord in self.hits:
-            return "💥"
-        if coord in self.misses:
-            return "💧"
-        if own_board:
-            for name, cells in self.ships.items():
-                if coord in cells:
-                    return "🚢"
-        return "🌊"
+    @classmethod
+    def random_layout(cls, seed: Optional[int] = None) -> "Board":
+        """Create a Board with all 5 ships placed randomly without overlap."""
+        rng = random.Random(seed)
+        board = cls()
+
+        for ship in SHIP_TYPES:
+            placed = False
+            for _attempt in range(1000):
+                direction = rng.choice(["H", "V"])
+                if direction == "H":
+                    start_x = rng.randint(0, cls.SIZE - ship.length)
+                    start_y = rng.randint(0, cls.SIZE - 1)
+                else:
+                    start_x = rng.randint(0, cls.SIZE - 1)
+                    start_y = rng.randint(0, cls.SIZE - ship.length)
+
+                try:
+                    board.place_ship(ship.name, (start_x, start_y), direction)
+                    placed = True
+                    break
+                except ValueError:
+                    continue
+
+            if not placed:
+                raise RuntimeError(f"Could not place {ship.name} randomly")
+
+        return board
 
     def render(self, show_ships: bool = False) -> str:
-        """Render board as a simple grid."""
+        """
+        Render board as a properly aligned grid.
+        
+        Uses monospace-friendly characters:
+          ·  = unresolved/empty
+          #  = ship (only when show_ships=True)
+          X  = hit
+          O  = miss
+        """
         lines = []
-        header = "   " + " ".join(f" {chr(ord('A') + c)} " for c in range(self.SIZE))
+        # Header: column letters, each cell is 2 chars wide (char + space)
+        header = "   " + " ".join(f" {c}" for c in self.COL_LETTERS)
         lines.append(header)
         for row in range(self.SIZE):
-            nums = f"{row + 1:2d}"
-            cells = " ".join(self.enemy_cell_char(c, row, own_board=show_ships) for c in range(self.SIZE))
-            lines.append(f"{nums} {cells}")
+            row_label = f"{row + 1:2d}"
+            cells = []
+            for col in range(self.SIZE):
+                coord = (col, row)
+                if coord in self.hits:
+                    cells.append("X")
+                elif coord in self.misses:
+                    cells.append("O")
+                elif show_ships:
+                    found = False
+                    for _, ship_cells in self.ships.items():
+                        if coord in ship_cells:
+                            cells.append("#")
+                            found = True
+                            break
+                    if not found:
+                        cells.append("·")
+                else:
+                    # Unresolved enemy cell → blank
+                    cells.append(" ")
+            line = row_label + " " + " ".join(f" {c}" for c in cells)
+            lines.append(line)
         return "\n".join(lines)
