@@ -2,12 +2,17 @@
   modulesPath,
   lib,
   pkgs,
+  slagskibe,
   ...
 } @ args:
 let
   sshAuthorizedKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOJy1bCfyM+qtQ3RdR9DjeYffMuwcburCVJ/LKeNI0z jef2022passphrase"
   ];
+
+  slagskibe = pkgs.writeShellScriptBin "slagskibe" ''
+    exec ${slagskibe}/bin/slagskibe "$@"
+  '';
 in
 {
   imports = [
@@ -134,12 +139,15 @@ in
     magic-wormhole # wormhole send anywhere
     nmap # also ncat
     python3
+    qrencode
     termshark # like wireshark just in the terminal
     tmux
     tree
     unp # unpack any archive
     vim
     vscodium
+  ] ++ [
+    slagskibe
   ];
 
   users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;

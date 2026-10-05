@@ -1,0 +1,29 @@
+# Placer dine skibe på et 10×10 bræt.
+# Koordinater: A1 til J10. Retning: horizontal eller vertical.
+# Skibstyper og længder:
+#   Carrier    = 5
+#   Battleship = 4
+#   Cruiser    = 3
+#   Submarine  = 3
+#   Destroyer  = 2
+
+ships:
+  - name: Carrier
+    cell: A1
+    direction: horizontal
+
+  - name: Battleship
+    cell: B1
+    direction: horizontal
+
+  - name: Cruiser
+    cell: C1
+    direction: horizontal
+
+  - name: Submarine
+    cell: D1
+    direction: horizontal
+
+  - name: Destroyer
+    cell: E1
+    direction: horizontal
