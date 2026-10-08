@@ -299,8 +299,9 @@ Toggle it by editing the lists in [`modules/firefox.nix`](modules/firefox.nix) (
 
 ![youtube-blocked](docs/youtube-blocked.png)
 
-Other sites are blocked fleet-wide via DNS in [`modules/dns-block.nix`](modules/dns-block.nix): each listed domain and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit the `blockedDomains` list there to add or remove names. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
-After a rebuild, check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
+Other sites are blocked fleet-wide via DNS in [`modules/dns-block.nix`](modules/dns-block.nix): each domain in [`modules/dns-blocklist.txt`](modules/dns-blocklist.txt) and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit that file to add or remove names.
+The list does not need a rebuild: `/etc/hosts` points at `/var/lib/dns-block/hosts`, and the `dns-block-fetch.timer` re-downloads the list from `main` every 5 minutes on Tuesdays 17:00-19:00 (so changes pushed during class are live within ~5-10 minutes). Run `sudo systemctl start dns-block-fetch` to refresh by hand. A rebuild also installs the list it was built with. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
+Check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
 
 ![facebook-blocked](docs/facebook-dns-blocked.png)
 
