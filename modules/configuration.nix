@@ -133,7 +133,7 @@ in
     librewolf # unmanaged browser
     magic-wormhole # wormhole send anywhere
     nmap # also ncat
-    python3
+    (python3.withPackages (ps: with ps; [ pip pygame ]))
     termshark # like wireshark just in the terminal
     tmux
     tree
