@@ -1,2 +1,8 @@
 secrets/** filter=git-crypt diff=git-crypt
+# sops ciphertext. Nix reads this from git, so it must not also be git-crypt.
+secrets/koderup.yaml !filter !diff
+# Public certificates Nix installs. Git-crypt ciphertext is not a PEM.
+secrets/mkcert/rootCA.pem !filter !diff
+secrets/mkcert/koderup.crt !filter !diff
+secrets/mkcert/koderup-fullchain.crt !filter !diff
 nixos-anywhere-extra-files/var/lib/sops-nix/age-private-key.txt filter=git-crypt diff=git-crypt

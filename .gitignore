@@ -1,5 +1,9 @@
 # secrets
 git-crypt-key
+sops-certs
 # the rest of the secrets should be encrypted, see .gitattributes and sops.nix
 
 __pycache__
+.cursor/
+# mdBook build output for the laptop manual (docs/manual); never commit it
+/docs/manual/book/

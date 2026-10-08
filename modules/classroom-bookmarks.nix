@@ -30,4 +30,19 @@
     name = "github.com/jensfriisnielsen/cpb-laptops";
     url = "https://github.com/jensfriisnielsen/cpb-laptops";
   }
+  {
+    toplevel_name = "Koderup";
+  }
+  {
+    name = "Laptop-manual";
+    url = "http://localhost:8888";
+  }
+  {
+    name = "Homepage";
+    url = "http://localhost:3000";
+  }
+  {
+    name = "koderup.dk";
+    url = "https://koderup.dk";
+  }
 ]

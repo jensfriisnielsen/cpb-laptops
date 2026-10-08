@@ -1,0 +1,19 @@
+# Koderup Laptop-manual (mdBook).
+#
+# Sources live in src/ (SUMMARY.md + chapters/). Build:
+#   mdbook build . --dest-dir book
+# Preview served on the repo's admin laptop like on the managed laptops:
+#   python3 -m http.server 8888 --bind 127.0.0.1 --directory book
+# Or simply: just manual
+#
+# modules/manual.nix builds this directory with mdBook during the NixOS
+# config build and serves the result on every laptop at
+# http://localhost:8888 (localhost only).
+
+[book]
+title = "Koderup Laptop-manual"
+description = "Manual til din Koderup-laptop"
+language = "da"
+src = "src"
+
+[output.html]

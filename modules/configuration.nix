@@ -26,10 +26,15 @@ in
     ./microbit.nix
     ./inkscape.nix
     ./bambu-studio.nix
+    ./colyseus.nix
     ./speakers.nix
     ./autoupgrade.nix
     ./kiosk.nix
+    ./koderup-ca.nix
+    ./manual.nix
+    ./homepage.nix
   ];
+
 
   services.flatpak.enable = true;
 
@@ -121,17 +126,20 @@ in
     #firefox # see ./firefox.nix
     gimp
     git
+    godot
     #inkscape # see ./inkscape.nix
     krita # paint https://krita.org/en/
     libreoffice
     librewolf # unmanaged browser
     magic-wormhole # wormhole send anywhere
+    nmap # also ncat
     python3
     termshark # like wireshark just in the terminal
     tmux
     tree
     unp # unpack any archive
     vim
+    vscodium
   ];
 
   users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;

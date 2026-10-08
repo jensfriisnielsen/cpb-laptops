@@ -9,6 +9,7 @@ instagram.com
 facebook.com
 tiktok.com
 snapchat.com
+discord.com
 
 # AI chatbots
 chatgpt.com
@@ -64,9 +65,12 @@ unblockedgames76.com
 unblockedgames77.com
 unblockedgames911.com
 
+whatbeatsrock.com
+
 # Cloud gaming / in-browser proxies (used to bypass other blocks)
 now.gg
 mathsspot.com
+neal.fun
 
 # Roblox
 roblox.com
@@ -112,3 +116,6 @@ mope.io
 wormax.io
 generals.io
 skribbl.io
+1001games.com
+freegames.com
+fnaffree.io

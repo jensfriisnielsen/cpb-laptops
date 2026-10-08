@@ -107,10 +107,14 @@
         packages = with pkgs; [
           git-crypt
           just
+          mkcert
+          sops
           ssh-to-age
           openssl
           share-eth
           eval-hosts
+          mdbook # build the laptop manual (docs/manual)
+          python3 # preview the manual / kiosk-demo pages
         ];
       };
     };
