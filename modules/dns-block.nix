@@ -12,6 +12,7 @@ let
     "facebook.com"
     "tiktok.com"
     "snapchat.com"
+    "discord.com"
 
     # AI chatbots
     "chatgpt.com"
@@ -120,6 +121,7 @@ let
     "skribbl.io"
     "1001games.com"
     "freegames.com"
+    "fnaffree.io"
   ];
   names = lib.unique (lib.concatMap (d: [ d "www.${d}" ]) blockedDomains);
 in
