@@ -7,7 +7,7 @@
 #
 # /etc/hosts is a symlink to /var/lib/dns-block/hosts so the list can change
 # without a NixOS rebuild. A timer re-downloads dns-blocklist.txt from main
-# every 5 minutes on Tuesdays 17:00-19:00 and regenerates the file.
+# every 5 minutes on Thursdays 17:00-19:00 and regenerates the file.
 # systemd-resolved consults /etc/hosts before its cache and notices changes
 # within 2 seconds, so a refreshed list is live within one 5-minute cycle.
 { config, lib, pkgs, ... }:
@@ -90,10 +90,10 @@ in
   };
 
   systemd.timers.dns-block-fetch = {
-    description = "Refresh DNS block list every 5 minutes on Tuesdays 17:00-19:00";
+    description = "Refresh DNS block list every 5 minutes on Thursdays 17:00-19:00";
     wantedBy = [ "timers.target" ];
     timerConfig = {
-      OnCalendar = "Tue *-*-* 17,18:00/5:00";
+      OnCalendar = "Thu *-*-* 17,18:00/5:00";
       RandomizedDelaySec = "60";
     };
   };

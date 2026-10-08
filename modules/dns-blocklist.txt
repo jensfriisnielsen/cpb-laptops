@@ -1,7 +1,7 @@
 # DNS block list for managed laptops (see modules/dns-block.nix).
 # One domain per line; "#" starts a comment. Each domain and its www. host
 # are sinkholed via /etc/hosts. Laptops re-download this file from main on
-# Tuesdays 17:00-19:00, so edits here take effect without a rebuild.
+# Thursdays 17:00-19:00, so edits here take effect without a rebuild.
 
 # Social media
 x.com
