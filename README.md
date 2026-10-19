@@ -343,6 +343,10 @@ just manual
 
 The fleet dashboard [gethomepage.dev](https://gethomepage.dev) runs on each laptop at `http://localhost:3000` (also localhost only) from the nixpkgs `homepage-dashboard` package via `koderup-homepage.service` ([`modules/homepage.nix`](modules/homepage.nix)). It shows two bookmarks — **Laptop-manual** (`localhost:8888`) and **koderup.dk** (`https://koderup.dk`) — mirrored as locked browser bookmarks in the **Koderup** folder.
 
+### Netværksværktøjer (ncat og manden-i-midten)
+
+The manual chapter [Netværk, ncat og manden-i-midten](docs/manual/src/chapters/netvaerk-og-ncat.md) teaches students to connect two laptops over Netbird with `ncat`, and to understand (and defend against) man-in-the-middle attacks. It requires `ncat` (from `nmap`), `arpspoof` (from `dsniff`, added to [`modules/configuration.nix`](modules/configuration.nix)) and `mitmproxy`. The offensive examples are lab-only, with explicit consent from the teacher and only on school-owned machines and an isolated exercise network — the primary goal is the defence section.
+
 ### LEGO SPIKE
 
 Use the official web app at [spike.legoeducation.com](https://spike.legoeducation.com/) in **Chromium** or **Brave**. Firefox cannot talk to the hub.
