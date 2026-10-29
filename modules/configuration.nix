@@ -26,6 +26,7 @@ in
     ./microbit.nix
     ./inkscape.nix
     ./bambu-studio.nix
+    ./bambuddy
     ./colyseus.nix
     ./speakers.nix
     ./autoupgrade.nix
@@ -58,6 +59,7 @@ in
           "org.kde.krita.desktop"
           "tinkercad.desktop"
           "com.bambulab.BambuStudio.desktop"
+          "bambuddy.desktop"
           "koderup-kiosk.desktop"
           "koderup-upgrade.desktop"
         ];

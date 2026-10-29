@@ -45,4 +45,8 @@
     name = "koderup.dk";
     url = "https://koderup.dk";
   }
+  {
+    name = "Bambuddy";
+    url = "https://10.89.97.70/";
+  }
 ]

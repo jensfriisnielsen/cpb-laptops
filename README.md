@@ -55,7 +55,7 @@ See [Resetting laptops](#resetting-laptops) for the full default Dash list.
 
 ### Resetting laptops
 
-The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, **Kiosk**, and **Opdater system**. Users can pin extra apps or remove these.
+The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, Bambuddy, **Kiosk**, and **Opdater system**. Users can pin extra apps or remove these.
 
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
@@ -307,11 +307,16 @@ Inkscape with extensions:
 - **Tinkercad**, a Dash launcher that opens [tinkercad.com](https://www.tinkercad.com/)
   as a Chromium app window.
 
+[`modules/bambuddy/`](modules/bambuddy/) adds **Bambuddy**, the printer dashboard on
+`https://10.89.97.70/`: a Dash launcher (Chromium app window, the site's own icon)
+and a bookmark. The server's self-signed certificate (`bambuddy.crt`, public cert
+only) is trusted system-wide and in Firefox, Chromium, and Brave.
+
 
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-They also get locked bookmark folders — **Pirater** (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops) and **Koderup** (Laptop-manual, koderup.dk) — defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
+They also get locked bookmark folders — **Pirater** (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops) and **Koderup** (Laptop-manual, Homepage, koderup.dk, Bambuddy) — defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
