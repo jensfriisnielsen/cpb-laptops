@@ -57,6 +57,8 @@ See [Resetting laptops](#resetting-laptops) for the full default Dash list.
 
 The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, Bambuddy, **Kiosk**, and **Opdater system**. Users can pin extra apps or remove these.
 
+The desktop and lock-screen background is set fleet-wide in [`modules/wallpaper/`](modules/wallpaper/) and locked via dconf, so users cannot change it. Replace `background.jpg` to change it.
+
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
 ```sh

@@ -34,6 +34,7 @@ in
     ./koderup-ca.nix
     ./manual.nix
     ./homepage.nix
+    ./wallpaper
   ];
 
 
