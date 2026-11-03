@@ -55,7 +55,9 @@ See [Resetting laptops](#resetting-laptops) for the full default Dash list.
 
 ### Resetting laptops
 
-The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, **Kiosk**, and **Opdater system**. Users can pin extra apps or remove these.
+The Dash (dock) defaults to Files, Terminal, Firefox, Brave, Chromium, Inkscape, Krita, Tinkercad, Bambu Studio, Bambuddy, **Kiosk**, and **Opdater system**. Users can pin extra apps or remove these.
+
+The desktop and lock-screen background is set fleet-wide in [`modules/wallpaper/`](modules/wallpaper/) and locked via dconf, so users cannot change it. Replace `background.jpg` to change it.
 
 Reset the Dash to that default list (as the logged-in user, or `sudo -u anon`):
 
@@ -307,11 +309,16 @@ Inkscape with extensions:
 - **Tinkercad**, a Dash launcher that opens [tinkercad.com](https://www.tinkercad.com/)
   as a Chromium app window.
 
+[`modules/bambuddy/`](modules/bambuddy/) adds **Bambuddy**, the printer dashboard on
+`https://10.89.97.70/`: a Dash launcher (Chromium app window, the site's own icon)
+and a bookmark. The server's self-signed certificate (`bambuddy.crt`, public cert
+only) is trusted system-wide and in Firefox, Chromium, and Brave.
+
 
 ### Browsers
 
 Firefox and Brave are the classroom browsers: notion homepage, Qwant search, and a YouTube URL block.
-They also get locked bookmark folders — **Pirater** (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops) and **Koderup** (Laptop-manual, koderup.dk) — defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
+They also get locked bookmark folders — **Pirater** (programmering.notion.site, pairdrop.net, editor.p5js.org, scratch.mit.edu, spike.legoeducation.com, makecode.microbit.org, github.com/jensfriisnielsen/cpb-laptops) and **Koderup** (Laptop-manual, Homepage, koderup.dk, Bambuddy) — defined in [`modules/classroom-bookmarks.nix`](modules/classroom-bookmarks.nix).
 Chromium gets the same privacy extensions and that bookmark folder (`programs.chromium.extraOpts` applies to Chromium and Brave).
 LibreWolf is unmanaged and still opens YouTube.
 
@@ -323,8 +330,9 @@ Toggle it by editing the lists in [`modules/firefox.nix`](modules/firefox.nix) (
 
 ![youtube-blocked](docs/youtube-blocked.png)
 
-Other sites are blocked fleet-wide via DNS in [`modules/dns-block.nix`](modules/dns-block.nix): each listed domain and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit the `blockedDomains` list there to add or remove names. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
-After a rebuild, check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
+Other sites are blocked fleet-wide via DNS in [`modules/dns-block.nix`](modules/dns-block.nix): each domain in [`modules/dns-blocklist.txt`](modules/dns-blocklist.txt) and its `www.` host are sinkholed in `/etc/hosts` (IPv4 and IPv6). Edit that file to add or remove names.
+The list does not need a rebuild: `/etc/hosts` points at `/var/lib/dns-block/hosts`, and the `dns-block-fetch.timer` re-downloads the list from `main` every 5 minutes on Thursdays 17:00-19:00 (so changes pushed during class are live within ~5-10 minutes). Run `sudo systemctl start dns-block-fetch` to refresh by hand. A rebuild also installs the list it was built with. Firefox, Brave, and Chromium have DNS-over-HTTPS disabled so they use system DNS; LibreWolf is unmanaged and may still bypass via its own DoH.
+Check with `getent hosts facebook.com` or `doggo facebook.com` (should resolve to `0.0.0.0` / `::`).
 
 ![facebook-blocked](docs/facebook-dns-blocked.png)
 
@@ -341,6 +349,10 @@ just manual
 ```
 
 The fleet dashboard [gethomepage.dev](https://gethomepage.dev) runs on each laptop at `http://localhost:3000` (also localhost only) from the nixpkgs `homepage-dashboard` package via `koderup-homepage.service` ([`modules/homepage.nix`](modules/homepage.nix)). It shows two bookmarks — **Laptop-manual** (`localhost:8888`) and **koderup.dk** (`https://koderup.dk`) — mirrored as locked browser bookmarks in the **Koderup** folder.
+
+### Netværksværktøjer (ncat og manden-i-midten)
+
+The manual chapter [Netværk, ncat og manden-i-midten](docs/manual/src/chapters/netvaerk-og-ncat.md) teaches students to connect two laptops over Netbird with `ncat`, and to understand (and defend against) man-in-the-middle attacks. It requires `ncat` (from `nmap`), `arpspoof` (from `dsniff`, added to [`modules/configuration.nix`](modules/configuration.nix)) and `mitmproxy`. The offensive examples are lab-only, with explicit consent from the teacher and only on school-owned machines and an isolated exercise network — the primary goal is the defence section.
 
 ### LEGO SPIKE
 

@@ -6,6 +6,7 @@
 - [Browsere](chapters/browsere.md)
 - [Bogmærker](chapters/bogmaerker.md)
 - [Programmer og værktøjer](chapters/programmer-og-vaerktoejer.md)
+- [Netværk, ncat og manden-i-midten](chapters/netvaerk-og-ncat.md)
 - [LEGO SPIKE og micro:bit](chapters/spike-og-microbit.md)
 - [Del filer](chapters/del-filer.md)
 - [Kiosk-tilstand](chapters/kiosk-tilstand.md)

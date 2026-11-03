@@ -31,6 +31,7 @@ in
     ./microbit.nix
     ./inkscape.nix
     ./bambu-studio.nix
+    ./bambuddy
     ./colyseus.nix
     ./speakers.nix
     ./autoupgrade.nix
@@ -38,6 +39,7 @@ in
     ./koderup-ca.nix
     ./manual.nix
     ./homepage.nix
+    ./wallpaper
   ];
 
 
@@ -63,6 +65,7 @@ in
           "org.kde.krita.desktop"
           "tinkercad.desktop"
           "com.bambulab.BambuStudio.desktop"
+          "bambuddy.desktop"
           "koderup-kiosk.desktop"
           "koderup-upgrade.desktop"
         ];
@@ -128,19 +131,25 @@ in
     })
     curl
     doggo # dns
+    dsniff # arpspoof etc. for the ncat/MITM teaching chapter
     #firefox # see ./firefox.nix
     gimp
     git
     godot
+    iptables # used by the ncat/MITM teaching chapter
     #inkscape # see ./inkscape.nix
     krita # paint https://krita.org/en/
     libreoffice
     librewolf # unmanaged browser
     magic-wormhole # wormhole send anywhere
+    mitmproxy # TLS interception, used in the ncat/MITM teaching chapter
     nmap # also ncat
     python3
     qrencode
+    openssl # certs for ncat --ssl in the ncat/MITM teaching chapter
+    (python3.withPackages (ps: with ps; [ pip pygame ]))
     termshark # like wireshark just in the terminal
+    tcpdump # packet capture for the ncat/MITM teaching chapter
     tmux
     tree
     unp # unpack any archive
