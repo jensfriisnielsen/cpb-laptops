@@ -2,12 +2,17 @@
   modulesPath,
   lib,
   pkgs,
+  slagskibe,
   ...
 } @ args:
 let
   sshAuthorizedKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEOJy1bCfyM+qtQ3RdR9DjeYffMuwcburCVJ/LKeNI0z jef2022passphrase"
   ];
+
+  slagskibe = pkgs.writeShellScriptBin "slagskibe" ''
+    exec ${slagskibe}/bin/slagskibe "$@"
+  '';
 in
 {
   imports = [
@@ -139,6 +144,8 @@ in
     magic-wormhole # wormhole send anywhere
     mitmproxy # TLS interception, used in the ncat/MITM teaching chapter
     nmap # also ncat
+    python3
+    qrencode
     openssl # certs for ncat --ssl in the ncat/MITM teaching chapter
     (python3.withPackages (ps: with ps; [ pip pygame ]))
     termshark # like wireshark just in the terminal
@@ -148,6 +155,8 @@ in
     unp # unpack any archive
     vim
     vscodium
+  ] ++ [
+    slagskibe
   ];
 
   users.users.root.openssh.authorizedKeys.keys = sshAuthorizedKeys;
