@@ -8,6 +8,7 @@
       pillow
       pip
       pygame
+      tkinter
     ]))
   ];
 }
