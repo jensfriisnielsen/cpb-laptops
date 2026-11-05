@@ -35,6 +35,7 @@ in
     ./manual.nix
     ./homepage.nix
     ./wallpaper
+    ./python.nix
   ];
 
 
@@ -140,7 +141,6 @@ in
     mitmproxy # TLS interception, used in the ncat/MITM teaching chapter
     nmap # also ncat
     openssl # certs for ncat --ssl in the ncat/MITM teaching chapter
-    (python3.withPackages (ps: with ps; [ pip pygame ]))
     termshark # like wireshark just in the terminal
     tcpdump # packet capture for the ncat/MITM teaching chapter
     tmux
