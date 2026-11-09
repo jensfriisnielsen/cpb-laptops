@@ -36,6 +36,7 @@ in
     ./homepage.nix
     ./wallpaper
     ./python.nix
+    ./krypt-opgave.nix
   ];
 
 

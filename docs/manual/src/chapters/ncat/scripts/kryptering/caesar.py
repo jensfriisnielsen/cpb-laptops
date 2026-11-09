@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """Cæsar-kryptering: flyt hvert bogstav et fast antal pladser i alfabetet.
 
-Kun bogstaverne a-z/A-Z bliver flyttet. Mellemrum, tal, tegnsætning og
-danske bogstaver (æøå) bliver ikke rørt.
+Det danske alfabet har 29 bogstaver (a-z samt æ, ø, å), og alle 29 bliver
+flyttet. Mellemrum, tal og tegnsætning bliver ikke rørt.
 """
 
 import argparse
 import sys
 
-ALFABET = "abcdefghijklmnopqrstuvwxyz"
+ALFABET = "abcdefghijklmnopqrstuvwxyzæøå"
 
 
 def caesar(tekst, flyt):

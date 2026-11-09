@@ -3,21 +3,23 @@
 
 I stedet for at flytte alfabetet et fast antal pladser (som i Cæsar-
 kryptering), bestemmer du selv, hvilket bogstav hvert bogstav skal
-blive til. Nøglen er en blanding af alle 26 bogstaver a-z — hvert
-bogstav skal bruges præcis én gang.
+blive til. Nøglen er en blanding af alle 29 bogstaver i det danske
+alfabet (a-z samt æ, ø, å) — hvert bogstav skal bruges præcis én gang.
 """
 
 import argparse
 import sys
 
-ALFABET = "abcdefghijklmnopqrstuvwxyz"
+ALFABET = "abcdefghijklmnopqrstuvwxyzæøå"
 
 
 def valider_noegle(noegle):
     if len(noegle) != len(ALFABET) or set(noegle) != set(ALFABET):
         raise SystemExit(
-            "Nøglen skal være alle 26 bogstaver a-z i en blandet rækkefølge, "
-            "hvert bogstav præcis én gang. Fx: 'qwertyuiopasdfghjklzxcvbnm'"
+            "Nøglen skal være alle 29 bogstaver i det danske alfabet (a-z samt "
+            "æ, ø, å) i en blandet rækkefølge, hvert bogstav præcis én gang. "
+            "Fx: 'qwertyuiopåasdfghjklæøzxcvbnm' (det danske tastatur, række for "
+            "række)."
         )
 
 
@@ -41,7 +43,8 @@ def main():
         "-n",
         "--noegle",
         required=True,
-        help="26 bogstaver a-z i blandet rækkefølge, fx 'qwertyuiopasdfghjklzxcvbnm'.",
+        help="29 bogstaver (a-z samt æ, ø, å) i blandet rækkefølge, fx "
+        "'qwertyuiopåasdfghjklæøzxcvbnm'.",
     )
     parser.add_argument(
         "-d",
