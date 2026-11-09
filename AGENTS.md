@@ -13,3 +13,4 @@
   - chromium does not have blocked websites
 - Dont check the entire flake, but rather parts of it, due to memory constraints
 - Just rules should be implemented as one liners that may call scripts in the repo
+- Keep exercise docs and their scripts in sync: when a script under `docs/manual/src/chapters/**/scripts/` changes (behavior, flags, installed command name), update the doc page that includes or references it in the same change, and vice versa
