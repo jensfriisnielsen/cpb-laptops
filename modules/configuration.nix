@@ -59,6 +59,7 @@ in
           "chromium-browser.desktop"
           "org.inkscape.Inkscape.desktop"
           "org.kde.krita.desktop"
+          "org.freecad.FreeCAD.desktop"
           "tinkercad.desktop"
           "com.bambulab.BambuStudio.desktop"
           "bambuddy.desktop"
@@ -129,6 +130,7 @@ in
     doggo # dns
     dsniff # arpspoof etc. for the ncat/MITM teaching chapter
     #firefox # see ./firefox.nix
+    freecad
     gimp
     git
     godot
